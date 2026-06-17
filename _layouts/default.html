@@ -50,6 +50,10 @@
       padding-left: 1.2rem;
       font-size: 1.1rem;
     }
+
+    [data-lang="zh"] {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -69,14 +73,24 @@
     const toggle = document.getElementById("language-toggle");
     let currentLanguage = "en";
 
-    toggle.addEventListener("click", () => {
-      currentLanguage = currentLanguage === "en" ? "zh" : "en";
+    function setLanguage(language) {
+      currentLanguage = language;
       document.documentElement.lang = currentLanguage === "en" ? "en" : "zh-CN";
       toggle.textContent = currentLanguage === "en" ? "中文" : "English";
 
       document.querySelectorAll("[data-en][data-zh]").forEach((element) => {
         element.textContent = element.dataset[currentLanguage];
       });
+
+      document.querySelectorAll("[data-lang]").forEach((element) => {
+        element.style.display = element.dataset.lang === currentLanguage ? "" : "none";
+      });
+    }
+
+    setLanguage(currentLanguage);
+
+    toggle.addEventListener("click", () => {
+      setLanguage(currentLanguage === "en" ? "zh" : "en");
     });
   </script>
 </body>
