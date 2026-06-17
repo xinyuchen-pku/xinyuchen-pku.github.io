@@ -51,7 +51,7 @@
       font-size: 1.1rem;
     }
 
-    [data-lang="zh"] {
+    [data-lang] {
       display: none;
     }
   </style>
@@ -83,7 +83,7 @@
       });
 
       document.querySelectorAll("[data-lang]").forEach((element) => {
-        element.style.display = element.dataset.lang === currentLanguage ? "" : "none";
+        element.style.display = element.dataset.lang === currentLanguage ? "block" : "none";
       });
     }
 
