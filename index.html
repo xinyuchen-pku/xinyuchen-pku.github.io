@@ -1,31 +1,16 @@
 ---
-layout: page
+layout: default
 title: Home
 ---
-
-<p>
-  <button id="language-toggle" type="button">中文</button>
-</p>
 
 <h1 data-en="Xinyu Chen's GitHub Homepage" data-zh="Xinyu Chen 的 GitHub 主页">
   Xinyu Chen's GitHub Homepage
 </h1>
 
-<p>
-  <a href="{{ '/blogs/' | relative_url }}" data-en="Blogs" data-zh="博客">Blogs</a>
-</p>
+<h2 data-en="Blogs" data-zh="博客">Blogs</h2>
 
-<script>
-  const toggle = document.getElementById("language-toggle");
-  let currentLanguage = "en";
-
-  toggle.addEventListener("click", () => {
-    currentLanguage = currentLanguage === "en" ? "zh" : "en";
-    document.documentElement.lang = currentLanguage === "en" ? "en" : "zh-CN";
-    toggle.textContent = currentLanguage === "en" ? "中文" : "English";
-
-    document.querySelectorAll("[data-en][data-zh]").forEach((element) => {
-      element.textContent = element.dataset[currentLanguage];
-    });
-  });
-</script>
+<ul class="blog-list">
+  <li>
+    <a href="{{ '/blogs/cryo-et/' | relative_url }}">Cryo-ET blog</a>
+  </li>
+</ul>
