@@ -1,11 +1,31 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8" />
-  <title>我的博客</title>
-</head>
-<body>
-  <h1>欢迎来到我的博客</h1>
-  <p>这是我用 GitHub Pages 搭建的博客。</p>
-</body>
-</html>
+---
+layout: page
+title: Home
+---
+
+<p>
+  <button id="language-toggle" type="button">中文</button>
+</p>
+
+<h1 data-en="Xinyu Chen's GitHub Homepage" data-zh="Xinyu Chen 的 GitHub 主页">
+  Xinyu Chen's GitHub Homepage
+</h1>
+
+<p>
+  <a href="{{ '/blogs/' | relative_url }}" data-en="Blogs" data-zh="博客">Blogs</a>
+</p>
+
+<script>
+  const toggle = document.getElementById("language-toggle");
+  let currentLanguage = "en";
+
+  toggle.addEventListener("click", () => {
+    currentLanguage = currentLanguage === "en" ? "zh" : "en";
+    document.documentElement.lang = currentLanguage === "en" ? "en" : "zh-CN";
+    toggle.textContent = currentLanguage === "en" ? "中文" : "English";
+
+    document.querySelectorAll("[data-en][data-zh]").forEach((element) => {
+      element.textContent = element.dataset[currentLanguage];
+    });
+  });
+</script>
