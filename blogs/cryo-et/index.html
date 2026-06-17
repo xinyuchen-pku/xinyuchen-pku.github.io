@@ -13,41 +13,65 @@ permalink: /blogs/cryo-et/
     Cryogenic electron tomography, or Cryo-ET, is a powerful imaging technique for observing biological structures in their near-native cellular environments. However, reconstructing high-quality 3D tomograms from limited-angle, noisy projection data remains a challenging inverse problem. This blog introduces the basic Cryo-ET workflow, reviews classical reconstruction methods such as Weighted Back Projection (WBP) and SIRT, and discusses recent advanced reconstruction methods including IsoNet, DeepDeWedge, CryoGEN, and CryoGEN-II.
   </p>
 
-  <h2>1. Introduction</h2>
+  <h2>1. Cryo-ET Background</h2>
 
-  <h2>2. Cryo-ET Background</h2>
+  <h3>1.1 The Pixel Bottleneck of Traditional Biology</h3>
 
-  <h2>3. Cryo-ET Workflow</h2>
+  <p>
+    For a long time, optical microscopy was the standard tool for observing biological samples. However, because visible light has wavelengths of roughly hundreds of nanometers, optical microscopes are limited by the diffraction limit. In practice, this means that structures smaller than about 200 nm are difficult to resolve clearly. Many important biological objects, such as viruses, protein complexes, and fine intracellular structures, exist at the nanometer scale, beyond the effective resolution of traditional optical microscopy.
+  </p>
 
-  <h3>3.1 Sampling</h3>
+  <figure>
+    <img src="{{ '/blogs/cryo-et/1_1.png' | relative_url }}" alt="Historical optical microscopes">
+    <figcaption>Figure 1.1. Historical optical microscopes, representative instruments of traditional light-based biological observation before nanoscale imaging became accessible.</figcaption>
+  </figure>
 
-  <h3>3.2 Data Collection</h3>
+  <h3>1.2 The Birth of Electron Microscopy</h3>
 
-  <h3>3.3 Tilt Series Assembly</h3>
+  <p>
+    To overcome the resolution limit of light microscopy, researchers began to use electrons instead of visible light for imaging. In 1931, Ernst Ruska built the first transmission electron microscope, or TEM. Because accelerated electrons have much shorter wavelengths than visible light, electron microscopy greatly improved the resolving power of microscopes and opened the door to observing biological structures at much smaller scales.
+  </p>
 
-  <h3>3.4 Tilt Series Correction</h3>
+  <p>
+    This was a major leap for biology. The observable scale moved from the cellular level toward the nanoscale, making it possible to visualize objects such as viruses, bacteriophages, and detailed intracellular structures that were previously inaccessible to optical microscopy.
+  </p>
 
-  <h3>3.5 Tomogram Reconstruction</h3>
+  <figure>
+    <img src="{{ '/blogs/cryo-et/1_2.jpg' | relative_url }}" alt="Early transmission electron microscope and Ernst Ruska">
+    <figcaption>Figure 1.2. An early transmission electron microscope and Ernst Ruska, whose pioneering work helped move biological imaging beyond the diffraction limit of visible light.</figcaption>
+  </figure>
 
-  <h2>4. Classical Reconstruction Methods</h2>
+  <h2>2. Cryo-ET Workflow</h2>
 
-  <h3>4.1 Weighted Back Projection</h3>
+  <h3>2.1 Sampling</h3>
 
-  <h3>4.2 SIRT</h3>
+  <h3>2.2 Data Collection</h3>
 
-  <h3>4.3 Limitations: Missing Wedge and Noise</h3>
+  <h3>2.3 Tilt Series Assembly</h3>
 
-  <h2>5. Advanced Reconstruction Methods</h2>
+  <h3>2.4 Tilt Series Correction</h3>
 
-  <h3>5.1 IsoNet</h3>
+  <h3>2.5 Tomogram Reconstruction</h3>
 
-  <h3>5.2 DeepDeWedge</h3>
+  <h2>3. Classical Reconstruction Methods</h2>
 
-  <h3>5.3 CryoGEN</h3>
+  <h3>3.1 Weighted Back Projection</h3>
 
-  <h3>5.4 CryoGEN-II</h3>
+  <h3>3.2 SIRT</h3>
 
-  <h2>6. Takeaway Messages</h2>
+  <h3>3.3 Limitations: Missing Wedge and Noise</h3>
+
+  <h2>4. Advanced Reconstruction Methods</h2>
+
+  <h3>4.1 IsoNet</h3>
+
+  <h3>4.2 DeepDeWedge</h3>
+
+  <h3>4.3 CryoGEN</h3>
+
+  <h3>4.4 CryoGEN-II</h3>
+
+  <h2>5. Takeaway Messages</h2>
 </article>
 
 <article data-lang="zh">
@@ -59,39 +83,63 @@ permalink: /blogs/cryo-et/
     冷冻电子断层扫描（Cryo-ET）是一种能够在接近原位状态下观察生物结构的重要成像技术。然而，由于倾斜角度受限、电子剂量低以及噪声较强，从二维投影重建高质量三维 tomogram 仍然是一个具有挑战性的逆问题。本文将从 Cryo-ET 的基本工作流程出发，介绍 Weighted Back Projection（WBP）、SIRT 等经典重建方法，并进一步讨论 IsoNet、DeepDeWedge、CryoGEN 和 CryoGEN-II 等 advanced reconstruction methods。
   </p>
 
-  <h2>1. 引言</h2>
+  <h2>1. Cryo-ET 背景知识</h2>
 
-  <h2>2. Cryo-ET 背景</h2>
+  <h3>1.1 传统生物学的像素瓶颈</h3>
 
-  <h2>3. Cryo-ET 工作流程</h2>
+  <p>
+    长期以来，光学显微镜是观察生物样本的主要工具。然而，可见光的波长通常在数百纳米量级，因此光学显微镜受到衍射极限的限制。在实际成像中，大约 200 nm 以下的结构很难被清楚分辨。而许多重要的生物对象，例如病毒、蛋白质复合物以及细胞内部的精细结构，都处于纳米尺度，超出了传统光学显微镜的有效观测范围。
+  </p>
 
-  <h3>3.1 采样</h3>
+  <figure>
+    <img src="{{ '/blogs/cryo-et/1_1.png' | relative_url }}" alt="早期光学显微镜">
+    <figcaption>图 1.1. 早期光学显微镜是传统光学成像时代观察生物样本的代表性工具，但其分辨能力受到可见光衍射极限的限制。</figcaption>
+  </figure>
 
-  <h3>3.2 数据收集</h3>
+  <h3>1.2 电子显微镜的诞生</h3>
 
-  <h3>3.3 倾斜序列组装</h3>
+  <p>
+    为了突破光学显微镜的分辨率限制，研究者开始使用电子束代替可见光进行成像。1931 年，Ernst Ruska 制造了第一台透射电子显微镜（Transmission Electron Microscope, TEM）。由于加速电子的波长远短于可见光，电子显微镜显著提升了显微成像的分辨能力，使人类能够观察到更微观的生物结构。
+  </p>
 
-  <h3>3.4 倾斜序列校正</h3>
+  <p>
+    这对生物学来说是一次重要飞跃。显微观测的尺度从细胞层面进一步推进到纳米尺度，使研究者能够观察病毒、噬菌体以及细胞内部精细结构等传统光学显微镜难以触及的对象。
+  </p>
 
-  <h3>3.5 Tomogram 重建</h3>
+  <figure>
+    <img src="{{ '/blogs/cryo-et/1_2.jpg' | relative_url }}" alt="早期透射电子显微镜与 Ernst Ruska">
+    <figcaption>图 1.2. 早期透射电子显微镜与 Ernst Ruska。电子显微镜的发展使生物成像突破可见光衍射极限，进入更高分辨率的纳米尺度观测。</figcaption>
+  </figure>
 
-  <h2>4. 经典重建方法</h2>
+  <h2>2. Cryo-ET 工作流程</h2>
 
-  <h3>4.1 Weighted Back Projection</h3>
+  <h3>2.1 采样</h3>
 
-  <h3>4.2 SIRT</h3>
+  <h3>2.2 数据收集</h3>
 
-  <h3>4.3 局限性：Missing Wedge 与噪声</h3>
+  <h3>2.3 倾斜序列组装</h3>
 
-  <h2>5. 先进重建方法</h2>
+  <h3>2.4 倾斜序列校正</h3>
 
-  <h3>5.1 IsoNet</h3>
+  <h3>2.5 Tomogram 重建</h3>
 
-  <h3>5.2 DeepDeWedge</h3>
+  <h2>3. 经典重建方法</h2>
 
-  <h3>5.3 CryoGEN</h3>
+  <h3>3.1 Weighted Back Projection</h3>
 
-  <h3>5.4 CryoGEN-II</h3>
+  <h3>3.2 SIRT</h3>
 
-  <h2>6. 总结</h2>
+  <h3>3.3 局限性：Missing Wedge 与噪声</h3>
+
+  <h2>4. 先进重建方法</h2>
+
+  <h3>4.1 IsoNet</h3>
+
+  <h3>4.2 DeepDeWedge</h3>
+
+  <h3>4.3 CryoGEN</h3>
+
+  <h3>4.4 CryoGEN-II</h3>
+
+  <h2>5. 总结</h2>
 </article>
