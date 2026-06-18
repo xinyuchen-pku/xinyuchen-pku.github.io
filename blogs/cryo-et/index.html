@@ -229,6 +229,38 @@ permalink: /blogs/cryo-et/
 
   <h3>2.3 Tilt Series Assembly</h3>
 
+  <p>
+    After data collection, each tilt angle usually corresponds to a short movie stack rather than a single image. Before these data can be used for tomographic reconstruction, beam-induced motion and radiation damage must be corrected. In practice, this step is commonly performed using MotionCor2 and MotionCor3, two widely used motion-correction tools in the cryo-EM and Cryo-ET community. More information about these tools can be found at <a href="https://emcore.ucsf.edu/ucsf-software">https://emcore.ucsf.edu/ucsf-software</a>.
+  </p>
+
+  <p>
+    These methods transform raw movie stacks into motion-corrected projection images through several key operations:
+  </p>
+
+  <ul>
+    <li>
+      <strong>Global motion correction.</strong> During imaging, the entire field of view may drift because of beam-induced motion, mechanical instability, charging effects, or deformation of the vitreous ice layer. The first step estimates the overall displacement of each frame and shifts all frames into a common coordinate system.
+    </li>
+    <li>
+      <strong>Local or patch-based correction.</strong> Motion is often not uniform across the image. Different regions may move in different directions or by different amounts. To address this, the image is divided into multiple patches, and local motion trajectories are estimated separately. These local measurements are then combined into a smooth motion field across the entire image, allowing local deformation to be corrected without introducing artificial discontinuities between neighboring patches.
+    </li>
+    <li>
+      <strong>Frame summation.</strong> After motion correction, the aligned frames within a movie stack are combined into a single projection image. Averaging multiple frames suppresses random noise while preserving structural information that remains consistent throughout the exposure.
+    </li>
+    <li>
+      <strong>Dose weighting.</strong> As the accumulated electron dose increases, later frames become progressively more affected by radiation damage, especially at high spatial frequencies. Dose weighting therefore assigns different frequency-dependent weights to different frames, preserving reliable high-resolution information while reducing radiation-damaged signal.
+    </li>
+  </ul>
+
+  <p>
+    After these operations, each tilt angle is represented by a single corrected projection image. The corrected projections are then assembled according to their acquisition angles to form the final tilt series, which serves as the input for downstream tilt-series alignment and tomographic reconstruction.
+  </p>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/2_3.png' | relative_url }}" alt="Tilt-series assembly from movie stacks through motion correction and frame summation">
+    <figcaption>Figure 2.4. Tilt-series assembly after data collection. For each tilt angle, the raw movie stack is motion-corrected and summed into one projection image; the corrected projections are then ordered by tilt angle and assembled into a tilt series for downstream alignment and tomographic reconstruction.</figcaption>
+  </figure>
+
   <h3>2.4 Tilt Series Correction</h3>
 
   <h3>2.5 Tomogram Reconstruction</h3>
@@ -478,6 +510,38 @@ permalink: /blogs/cryo-et/
   </p>
 
   <h3>2.3 倾斜序列组装</h3>
+
+  <p>
+    在数据收集完成后，每个倾斜角度通常对应的是一个短的 movie stack，而不是单张图像。在这些数据用于后续三维重建之前，需要先校正电子束诱导运动和辐照损伤。在实际工作中，这一步通常由 MotionCor2 和 MotionCor3 等经典运动校正软件完成，它们是目前 cryo-EM 与 Cryo-ET 社区中应用最广泛的方法之一。关于这些软件的更多细节，可以参考 <a href="https://emcore.ucsf.edu/ucsf-software">https://emcore.ucsf.edu/ucsf-software</a>。
+  </p>
+
+  <p>
+    这些方法通常通过以下几个关键步骤，将原始 movie stack 转换为校正后的投影图像：
+  </p>
+
+  <ul>
+    <li>
+      <strong>全局运动校正（Global Motion Correction）。</strong> 在成像过程中，整个视野可能因为电子束诱导运动、机械不稳定、电荷效应或玻璃态冰层形变而发生漂移。首先需要估计每一帧的整体位移，并将所有帧移动到统一坐标系中完成初步对齐。
+    </li>
+    <li>
+      <strong>局部或分块运动校正（Local / Patch-Based Correction）。</strong> 实际运动往往不是整张图像完全一致的，不同区域可能以不同方向或不同幅度发生移动。因此，算法会将图像划分为多个 patch，并分别估计每个 patch 的运动轨迹。随后，这些局部运动信息会被整合为覆盖全图的平滑运动场，从而在校正局部形变的同时避免 patch 边界产生人为伪影。
+    </li>
+    <li>
+      <strong>帧叠加（Frame Summation）。</strong> 完成运动校正后，同一个 movie stack 中已经对齐的多帧图像会被叠加为一张投影图像。多帧平均能够有效降低随机噪声，同时保留在整个曝光过程中稳定存在的结构信息。
+    </li>
+    <li>
+      <strong>剂量权重处理（Dose Weighting）。</strong> 随着电子剂量不断累积，后期帧受到的辐照损伤会逐渐增加，尤其是高频信息衰减更加明显。因此，算法会根据累计剂量为不同帧分配不同的频率权重，在尽可能保留可靠高分辨率信息的同时降低受损信号的影响。
+    </li>
+  </ul>
+
+  <p>
+    经过上述处理后，每个倾斜角度最终对应一张校正后的投影图像。这些投影图像会按照采集角度进行排序和组装，形成最终的 tilt series，并作为后续 tilt-series alignment 和 tomographic reconstruction 的输入。
+  </p>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/2_3.png' | relative_url }}" alt="从 movie stack 经过运动校正和帧叠加组装为 tilt series">
+    <figcaption>图 2.4. 数据收集后的倾斜序列组装流程。每个倾斜角度对应的原始 movie stack 先经过运动校正并叠加为一张投影图像，随后这些校正后的投影图像按照倾斜角度排序，组装成用于后续对齐和三维重建的 tilt series。</figcaption>
+  </figure>
 
   <h3>2.4 倾斜序列校正</h3>
 
