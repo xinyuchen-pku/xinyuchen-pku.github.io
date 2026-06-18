@@ -129,9 +129,103 @@ permalink: /blogs/cryo-et/
 
   <h2>2. Cryo-ET Workflow</h2>
 
+  <p>
+    A typical Cryo-ET workflow consists of five major steps: sampling, data collection, tilt series assembly, optional tilt series correction, and tomogram reconstruction.
+  </p>
+
   <h3>2.1 Sampling</h3>
 
+  <p>
+    Sampling is the first step in Cryo-ET. Its goal is to prepare a thin, well-preserved biological specimen that can be imaged under cryogenic conditions in a transmission electron microscope. Since biological samples are usually thick, hydrated, and sensitive to radiation damage, careful sample preparation is essential for preserving native structures and enabling high-quality downstream reconstruction.
+  </p>
+
+  <p>
+    The process usually begins with vitrification. The specimen is rapidly frozen by high-pressure freezing or plunge freezing, so that water is transformed into vitreous ice instead of crystalline ice. This avoids ice crystal damage and helps preserve biological molecules in a near-native state.
+  </p>
+
+  <p>
+    After vitrification, the sample is transferred under cryogenic conditions for localization and thinning. Cryo-CLEM can be used to locate the region of interest, and FIB-SEM is then used to mill away excess material. Before milling, a protective layer such as platinum or an organometallic coating is often deposited to reduce surface damage.
+  </p>
+
+  <p>
+    Finally, low-current polishing is performed to reduce curtaining artifacts and obtain a smooth, thin lamella. The final product is a thin sample slice suitable for subsequent tilt-series data collection in the TEM.
+  </p>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/2_1.png' | relative_url }}" alt="Cryo-ET sample preparation workflow from cell loading to vitrification and lamella thinning">
+    <figcaption>Figure 2.1. Cryo-ET sample preparation workflow. Cells are loaded onto an EM grid, rapidly plunge-frozen in liquid ethane to form vitreous ice, and then thinned by focused ion beam milling to produce a lamella suitable for TEM tilt-series acquisition.</figcaption>
+  </figure>
+
   <h3>2.2 Data Collection</h3>
+
+  <p>
+    After the thin lamella is prepared, the cryo-sample grid is inserted into a transmission electron microscope equipped with a tilting stage. During data collection, the sample is gradually tilted around a fixed tilt axis, and a projection image is recorded at each tilt angle. Instead of directly observing the full 3D structure, Cryo-ET collects a series of 2D projections from different viewing directions.
+  </p>
+
+  <p>
+    In practice, the tilt range is limited, often around −60° to +60°. This limitation is caused by the geometry of the microscope, the sample holder, and the increasing effective thickness of the sample at high tilt angles. Because projections outside this angular range cannot be collected, part of the information in Fourier space is missing. This later becomes the well-known missing wedge problem in tomogram reconstruction.
+  </p>
+
+  <p>
+    At each tilt angle, the detector usually records a short movie stack rather than a single still image. For example, one projection may consist of 3 to 7 frames. These frames can later be aligned and averaged to reduce beam-induced motion and improve the signal-to-noise ratio.
+  </p>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/2_2_1.png' | relative_url }}" alt="Cryo-ET tilt-series data collection with projected images and movie stacks">
+    <figcaption>Figure 2.2. Cryo-ET tilt-series data collection. The lamella is tilted around a fixed axis under the electron beam, and projection images are recorded at multiple tilt angles, usually as short movie stacks that can later be motion-corrected and averaged.</figcaption>
+  </figure>
+
+  <ul>
+    <li>
+      <strong>Unidirectional scheme.</strong> Suppose the tilt range is from −60° to +60° with a step size of 3°. A unidirectional scheme may collect images continuously from one end to the other, such as −60°, −57°, −54°, ..., 0°, ..., +57°, +60°. This is simple and fast, but the important low-tilt images near 0° may be collected after the sample has already received a considerable electron dose.
+    </li>
+    <li>
+      <strong>Bidirectional scheme.</strong> A bidirectional scheme starts near 0° and then collects one side before returning to the other side, for example 0°, +3°, +6°, ..., +60°, followed by −3°, −6°, ..., −60°. This protects the low-tilt images by collecting them early, but the two sides of the tilt series may have different accumulated dose levels, leading to asymmetric data quality.
+    </li>
+    <li>
+      <strong>Dose-symmetric scheme.</strong> A dose-symmetric scheme alternates between positive and negative angles around 0°, such as 0°, +3°, −3°, +6°, −6°, ..., +60°, −60°. This strategy keeps the accumulated dose more balanced across opposite tilt angles and usually gives more symmetric data quality. However, it requires frequent mechanical switching of the stage and therefore places higher demands on microscope stability and acquisition control.
+    </li>
+  </ul>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/2_2_2.png' | relative_url }}" alt="Comparison of unidirectional bidirectional and dose-symmetric tilt acquisition schemes">
+    <figcaption>Figure 2.3. Comparison of three tilt-angle acquisition schemes. Unidirectional acquisition moves continuously from one end of the tilt range to the other, bidirectional acquisition starts near 0° and then covers the two sides separately, and dose-symmetric acquisition alternates around 0° to balance accumulated electron dose.</figcaption>
+  </figure>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Scheme</th>
+        <th>Example order</th>
+        <th>Advantage</th>
+        <th>Limitation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th>Unidirectional</th>
+        <td>−60°, −57°, ..., 0°, ..., +57°, +60°</td>
+        <td>Fast and mechanically continuous</td>
+        <td>Low-tilt images near 0° may suffer from accumulated radiation damage</td>
+      </tr>
+      <tr>
+        <th>Bidirectional</th>
+        <td>0°, +3°, ..., +60°, then −3°, ..., −60°</td>
+        <td>Protects the important 0° region by collecting it early</td>
+        <td>Data quality may become asymmetric between two sides</td>
+      </tr>
+      <tr>
+        <th>Dose-symmetric</th>
+        <td>0°, +3°, −3°, +6°, −6°, ..., +60°, −60°</td>
+        <td>More balanced dose distribution and more symmetric data quality</td>
+        <td>Requires frequent stage switching and higher instrument stability</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Overall, data collection determines both the angular coverage and the noise level of the final tilt series. These two factors directly affect the quality of the reconstructed tomogram: limited angular coverage leads to missing wedge artifacts, while low-dose imaging introduces strong noise. Therefore, data collection is not only an experimental step, but also a key factor that shapes the computational reconstruction problem.
+  </p>
 
   <h3>2.3 Tilt Series Assembly</h3>
 
@@ -227,7 +321,7 @@ permalink: /blogs/cryo-et/
   </p>
 
   <figure>
-    <img src="{{ '/blogs/cryo-et/1_4.jpg' | relative_url }}" alt="Dubochet 玻璃化冷冻电镜样本制备方法">
+    <img src="{{ '/blogs/cryo-et/1_4.jpeg' | relative_url }}" alt="Dubochet 玻璃化冷冻电镜样本制备方法">
     <figcaption>图 1.4. Dubochet 的玻璃化样本制备方法。薄层含水样本被加到网格上并快速投入低温介质中，使生物样本被固定在玻璃态冰中，用于冷冻电镜观测。</figcaption>
   </figure>
 
@@ -285,9 +379,103 @@ permalink: /blogs/cryo-et/
 
   <h2>2. Cryo-ET 工作流程</h2>
 
+  <p>
+    一个典型的 Cryo-ET 工作流程通常包括五个主要步骤：采样、数据收集、倾斜序列组装、可选的倾斜序列校正，以及 tomogram 重建。
+  </p>
+
   <h3>2.1 采样</h3>
 
+  <p>
+    采样是 Cryo-ET 工作流程的第一步，目标是制备一个足够薄、结构保存良好的生物样本，使其能够在低温条件下被透射电子显微镜成像。由于生物样本通常较厚、含水量高，并且容易受到电子束辐照损伤，因此样本制备对于保留天然结构和后续高质量重建至关重要。
+  </p>
+
+  <p>
+    采样过程通常从玻璃化开始。样本会通过高压冷冻或 plunge freezing 被快速冷冻，使水转变为玻璃态冰而不是晶态冰。这样可以避免冰晶对结构造成破坏，并尽可能保留生物大分子的近天然状态。
+  </p>
+
+  <p>
+    玻璃化之后，样本会在低温条件下被转移，并进行定位和减薄处理。Cryo-CLEM 可以用于定位感兴趣区域，随后使用 FIB-SEM 去除多余材料。在铣削之前，通常会沉积一层保护层，例如铂或有机金属涂层，以减少样本表面损伤。
+  </p>
+
+  <p>
+    最后，通过低电流精细抛光减少 curtaining artifacts，获得表面更加平滑的薄 lamella。最终得到的薄样本片可以用于后续在 TEM 中进行倾斜序列采集。
+  </p>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/2_1.png' | relative_url }}" alt="Cryo-ET 样本制备流程：从细胞加载到玻璃化冷冻和 lamella 减薄">
+    <figcaption>图 2.1. Cryo-ET 样本制备流程。细胞首先被加载到 EM grid 上，随后在液态乙烷中快速 plunge freezing 形成玻璃态冰，并通过聚焦离子束铣削减薄为适合 TEM 倾斜序列采集的 lamella。</figcaption>
+  </figure>
+
   <h3>2.2 数据收集</h3>
+
+  <p>
+    在薄 lamella 制备完成后，带有冷冻样本的网格会被插入到装有旋转台的透射电子显微镜中。在数据收集过程中，样本会围绕固定的倾斜轴逐步旋转，并在每个倾斜角度记录一张投影图像。Cryo-ET 并不是直接观察完整的三维结构，而是从不同观察方向采集一系列二维投影。
+  </p>
+
+  <p>
+    在实际采集中，倾斜角度范围是受限的，通常大约在 −60° 到 +60° 之间。这一限制来自电镜几何结构、样品杆设计，以及高倾斜角下样本等效厚度增加等因素。由于无法采集这个角度范围之外的投影图像，傅里叶空间中的一部分信息会缺失，这也就是后续 tomogram 重建中常说的 missing wedge 问题。
+  </p>
+
+  <p>
+    在每个倾斜角度下，电子探测器通常不是只记录一张静态图像，而是记录一个较短的 movie stack。例如，每个投影可能由 3 到 7 帧组成。后续处理时，可以对这些帧进行对齐和叠加，以减少电子束诱导运动的影响，并提高信噪比。
+  </p>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/2_2_1.png' | relative_url }}" alt="Cryo-ET 倾斜序列数据采集过程，包括投影图像和 movie stack">
+    <figcaption>图 2.2. Cryo-ET 倾斜序列数据采集过程。Lamella 在电子束下围绕固定倾斜轴旋转，并在多个倾斜角度记录投影图像；每个角度通常采集为短 movie stack，后续可用于运动校正和平均。</figcaption>
+  </figure>
+
+  <ul>
+    <li>
+      <strong>Unidirectional 方案。</strong> 假设倾斜范围是 −60° 到 +60°，步长为 3°。单向采集方案可以从一端连续采集到另一端，例如 −60°、−57°、−54°、……、0°、……、+57°、+60°。这种方式简单且快速，但接近 0° 的低倾斜图像通常包含较关键信息，却可能在样本已经累积较高电子剂量之后才被采集。
+    </li>
+    <li>
+      <strong>Bidirectional 方案。</strong> 双向采集方案通常从 0° 附近开始，先采集一侧，再回到另一侧，例如 0°、+3°、+6°、……、+60°，然后采集 −3°、−6°、……、−60°。这种方案可以优先采集低倾斜角图像，从而保护 0° 附近的关键信息。但由于两侧数据是在不同累积剂量条件下采集的，可能会导致倾斜序列两侧的数据质量不对称。
+    </li>
+    <li>
+      <strong>Dose-symmetric 方案。</strong> 剂量对称采集方案则围绕 0° 在正负角度之间交替采集，例如 0°、+3°、−3°、+6°、−6°、……、+60°、−60°。这种策略可以让正负相对倾斜角下的数据接受更接近的累积剂量，因此数据质量更加对称，通常有利于获得更好的重建结果。不过，它需要旋转台频繁切换方向，对设备稳定性和采集控制提出了更高要求。
+    </li>
+  </ul>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/2_2_2.png' | relative_url }}" alt="Unidirectional、bidirectional 和 dose-symmetric 三种倾斜角采集方案对比">
+    <figcaption>图 2.3. 三种倾斜角采集方案对比。Unidirectional 从倾斜范围一端连续采到另一端；bidirectional 从 0° 附近开始并分别采集两侧；dose-symmetric 围绕 0° 正负交替采集，以平衡相对倾斜角之间的累积电子剂量。</figcaption>
+  </figure>
+
+  <table>
+    <thead>
+      <tr>
+        <th>方案</th>
+        <th>示例采集顺序</th>
+        <th>优点</th>
+        <th>局限</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th>Unidirectional</th>
+        <td>−60°、−57°、……、0°、……、+57°、+60°</td>
+        <td>速度快，机械运动连续性好</td>
+        <td>0° 附近的低倾斜图像可能受到较严重的累积辐照损伤</td>
+      </tr>
+      <tr>
+        <th>Bidirectional</th>
+        <td>0°、+3°、……、+60°，然后 −3°、……、−60°</td>
+        <td>优先采集 0° 附近图像，保护关键信息</td>
+        <td>两侧数据质量可能不对称</td>
+      </tr>
+      <tr>
+        <th>Dose-symmetric</th>
+        <td>0°、+3°、−3°、+6°、−6°、……、+60°、−60°</td>
+        <td>剂量分布更均衡，数据质量更对称</td>
+        <td>需要频繁切换旋转台方向，对设备稳定性要求更高</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    总体来说，数据收集决定了最终倾斜序列的角度覆盖范围和噪声水平。这两个因素会直接影响 tomogram 的重建质量：角度覆盖受限会导致 missing wedge 伪影，而低剂量成像会引入较强噪声。因此，数据收集不仅是一个实验步骤，也直接决定了后续计算重建问题的难度。
+  </p>
 
   <h3>2.3 倾斜序列组装</h3>
 
