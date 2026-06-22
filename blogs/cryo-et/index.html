@@ -764,6 +764,216 @@ permalink: /blogs/cryo-et/
 
   <h3>3.3 CryoGEN</h3>
 
+  <p>
+    CryoGEN rethinks Cryo-ET reconstruction from a probabilistic and generative perspective. Instead of treating missing-wedge correction as only a deterministic image-to-image restoration problem, CryoGEN formulates Cryo-ET reconstruction as an ill-posed inverse problem with multiple plausible solutions.
+  </p>
+
+  <p>
+    Let \(y\) denote the observed missing-wedge tomogram, and let \(x\) denote the underlying complete tomogram that we would like to recover. The forward degradation process can be written as
+  </p>
+
+  \[
+  y=T_M(x)+\epsilon_n,
+  \qquad
+  \epsilon_n\sim\mathcal{N}(0,\sigma_n^2I),
+  \]
+
+  <p>
+    where \(T_M\) is the missing-wedge operator and \(\epsilon_n\) is imaging noise. Intuitively, \(T_M\) removes part of the Fourier-space information according to the limited tilt range.
+  </p>
+
+  <p>
+    From Bayes' rule, the posterior distribution of the complete tomogram can be written as
+  </p>
+
+  \[
+  \log p(x|y)=\log p(y|x)+\log p(x)+C.
+  \]
+
+  <p>
+    Since the noise is assumed to be Gaussian, the likelihood term becomes a data-consistency term:
+  </p>
+
+  \[
+  \log p(y|x)=
+  -\frac{1}{2\sigma_n^2}
+  \left\|T_M(x)-y\right\|_2^2
+  +C.
+  \]
+
+  <p>
+    Therefore, the maximum a posteriori, or MAP, reconstruction can be written as
+  </p>
+
+  \[
+  x^*(y)=
+  \arg\max_x
+  \left[
+  -\frac{1}{2\sigma_n^2}
+  \left\|T_M(x)-y\right\|_2^2
+  +\log p(x)
+  \right].
+  \]
+
+  <p>
+    This equation contains two parts. The first term requires the reconstructed tomogram to be consistent with the observed missing-wedge tomogram after applying the forward operator \(T_M\). The second term is a prior term, which encourages the reconstruction to look like a plausible biological tomogram.
+  </p>
+
+  <p>
+    The key difficulty is that the true prior distribution \(p(x)\) of complete tomograms is unknown, because we do not have access to ground-truth full tomograms. CryoGEN addresses this by introducing an energy-based prior:
+  </p>
+
+  \[
+  p(x)=
+  \frac{1}{Z}
+  \exp(-E_x(x)),
+  \]
+
+  <p>
+    where \(E_x(x)\) is an energy function and \(Z\) is the partition function. Low-energy samples correspond to more plausible reconstructions, while high-energy samples correspond to unrealistic or artifact-contaminated reconstructions.
+  </p>
+
+  <p>
+    With this prior, the MAP objective can be equivalently viewed as minimizing
+  </p>
+
+  \[
+  \frac{1}{2\sigma_n^2}
+  \left\|T_M(x)-y\right\|_2^2
+  +
+  E_x(x).
+  \]
+
+  <p>
+    This gives a clear interpretation: CryoGEN wants a reconstruction that is both consistent with the measured data and located in a low-energy region of the biological tomogram prior.
+  </p>
+
+  <p>
+    A central motivation of CryoGEN is the one-to-many nature of Cryo-ET reconstruction. Because \(T_M\) removes information, two different complete tomograms \(x_1\) and \(x_2\) may produce the same observed tomogram \(y\):
+  </p>
+
+  \[
+  T_M(x_1)=T_M(x_2)=y.
+  \]
+
+  <p>
+    If a deterministic model is trained with a simple reconstruction loss, it may learn an averaged solution,
+  </p>
+
+  \[
+  \bar{x}=\frac{1}{2}(x_1+x_2).
+  \]
+
+  <p>
+    However, this averaged result may not correspond to a realistic biological structure. In an energy landscape, \(x_1\) and \(x_2\) may both be low-energy plausible solutions, while \(\bar{x}\) lies in a high-energy region between them. This means that the average of plausible solutions is not necessarily plausible.
+  </p>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/3_3_1.png' | relative_url }}" alt="Energy landscape showing multiple plausible minima and an implausible averaged solution">
+    <figcaption>Figure 3.6. Energy-landscape motivation for CryoGEN. Multiple plausible reconstructions can correspond to low-energy minima, while their deterministic average may lie in a higher-energy region and therefore may not represent a realistic biological structure.</figcaption>
+  </figure>
+
+  <p>
+    To address this one-to-many ambiguity, CryoGEN introduces random noise into the reconstructor:
+  </p>
+
+  \[
+  \hat{x}=g_\theta(y+\epsilon_g),
+  \qquad
+  \epsilon_g\sim\mathcal{N}(0,\sigma_g^2I).
+  \]
+
+  <p>
+    Here, \(g_\theta\) is the prediction model. With the additional noise \(\epsilon_g\), the same observation \(y\) can be mapped to different plausible reconstructions instead of being forced into one deterministic average. In this sense, CryoGEN changes reconstruction from a one-to-one mapping into a conditional generative process.
+  </p>
+
+  <p>
+    The remaining question is how to learn the energy prior without ground-truth complete tomograms. CryoGEN makes an important assumption: if a reconstructed \(x\) is plausible, then after rotation and missing-wedge projection, \(T_M(Rx)\) should also look like a real observed tomogram. Therefore, instead of learning the energy directly in the complete tomogram space \(X\), CryoGEN learns it in the observable missing-wedge space \(Y\).
+  </p>
+
+  <p>
+    In practice, this energy model is implemented with a GAN-based adversarial formulation. The model compares real observed tomograms \(y+\epsilon\) with generated observations \(T_M(Rg_\theta(y+\epsilon_g))\). Conceptually, the adversarial objective can be written as
+  </p>
+
+  \[
+  \max_\phi \min_\theta
+  \mathbb{E}
+  \left[
+  \frac{1}{|\mathcal{R}|}
+  \sum_{R\in\mathcal{R}}
+  E_\phi
+  \left(
+  T_M(Rg_\theta(y+\epsilon_g))
+  \right)
+  -
+  E_\phi(y+\epsilon)
+  \right].
+  \]
+
+  <p>
+    Here, \(E_\phi\) acts as the energy model, or discriminator-like prior model. It learns to distinguish real observations from generated ones, while \(g_\theta\) is trained to generate reconstructions whose projected observations match the real tomogram distribution.
+  </p>
+
+  <p>
+    CryoGEN also keeps a consistency term similar in spirit to self-supervised reconstruction. This term encourages the predicted tomogram to remain stable after rotation, simulated missing-wedge corruption, and reconstruction:
+  </p>
+
+  \[
+  \mathcal{L}_{\text{cons}}
+  =
+  \mathbb{E}
+  \left[
+  \frac{1}{|\mathcal{R}|}
+  \sum_{R\in\mathcal{R}}
+  \left\|
+  R^{-1}
+  g_{\theta'}
+  \left(
+  T_M(R(g_\theta(y)+\epsilon_h))
+  \right)
+  -
+  g_\theta(y)
+  \right\|_2^2
+  \right].
+  \]
+
+  <p>
+    This term preserves the useful self-supervised signal from IsoNet-like methods, while the energy-based prior provides an additional distribution-level constraint.
+  </p>
+
+  <p>
+    Overall, the CryoGEN training objective can be understood as combining three forces:
+  </p>
+
+  <ul>
+    <li>Data consistency, which requires \(T_M(g_\theta(y+\epsilon_g))\) to match the observed \(y\).</li>
+    <li>Self-supervised consistency, which stabilizes reconstruction under rotation and simulated missing-wedge corruption.</li>
+    <li>Energy-based prior matching, which encourages generated reconstructions to lie on the distribution of plausible biological tomograms.</li>
+  </ul>
+
+  <p>
+    During inference, CryoGEN no longer needs recursive refinement over many iterations. The input tomogram is divided into overlapping subtomograms, each subtomogram is passed through the trained prediction model \(g_\theta\), and the refined subtomograms are reassembled into a complete tomogram. Overlapping regions are averaged to reduce boundary artifacts.
+  </p>
+
+  <p>
+    The practical advantage of CryoGEN is that it keeps the efficiency of direct prediction while avoiding the deterministic averaging problem. The random noise improves output diversity, the reconstructor performs self-supervised reconstruction, and the GAN-based energy model evaluates whether the reconstructed prior is realistic enough.
+  </p>
+
+  <p>
+    In experiments, CryoGEN produces more complete reconstructions, higher contrast, fewer artifacts, and more consistent Fourier-domain patterns. Compared with recursive methods such as IsoNet, it also significantly reduces training time, achieving around a 10x speedup in reported experiments.
+  </p>
+
+  <div class="figure-row">
+    <figure>
+      <img src="{{ '/blogs/cryo-et/3_3_2.png' | relative_url }}" alt="CryoGEN correction compared with WBP IsoNet and real structure on a synthetic structure">
+      <figcaption>Figure 3.7. CryoGEN reconstruction on a synthetic structure. Compared with WBP and IsoNet, CryoGEN produces a more complete and realistic correction that is closer to the reference structure.</figcaption>
+    </figure>
+    <figure>
+      <img src="{{ '/blogs/cryo-et/3_3_3.png' | relative_url }}" alt="IsoNet and CryoGEN corrected purified ribosome tomograms with Fourier-domain comparison">
+      <figcaption>Figure 3.8. CryoGEN result on purified ribosome tomograms. Compared with IsoNet, CryoGEN improves contrast and structural continuity, while the Fourier-domain view shows a more consistent frequency distribution.</figcaption>
+    </figure>
+  </div>
+
   <h3>3.4 CryoGEN-II</h3>
 
   <h2>4. Takeaway Messages</h2>
@@ -1528,6 +1738,216 @@ permalink: /blogs/cryo-et/
   </figure>
 
   <h3>3.3 CryoGEN</h3>
+
+  <p>
+    CryoGEN 从概率建模和生成式建模的角度重新思考 Cryo-ET 重建。它并不把 missing wedge correction 仅仅看作一个确定性的 image-to-image restoration 问题，而是将 Cryo-ET 重建建模为一个具有多个潜在解的病态逆问题。
+  </p>
+
+  <p>
+    令 \(y\) 表示观测到的 missing-wedge tomogram，\(x\) 表示希望恢复的完整 tomogram。前向退化过程可以写作：
+  </p>
+
+  \[
+  y=T_M(x)+\epsilon_n,
+  \qquad
+  \epsilon_n\sim\mathcal{N}(0,\sigma_n^2I),
+  \]
+
+  <p>
+    其中，\(T_M\) 是 missing-wedge operator，\(\epsilon_n\) 表示成像噪声。直观上，\(T_M\) 会根据有限倾斜角度移除傅里叶空间中的一部分信息。
+  </p>
+
+  <p>
+    根据贝叶斯公式，完整 tomogram 的后验分布可以写成：
+  </p>
+
+  \[
+  \log p(x|y)=\log p(y|x)+\log p(x)+C.
+  \]
+
+  <p>
+    由于噪声被假设为高斯噪声，似然项可以写成一个 data-consistency term：
+  </p>
+
+  \[
+  \log p(y|x)=
+  -\frac{1}{2\sigma_n^2}
+  \left\|T_M(x)-y\right\|_2^2
+  +C.
+  \]
+
+  <p>
+    因此，最大后验估计（maximum a posteriori, MAP）形式的重建可以写作：
+  </p>
+
+  \[
+  x^*(y)=
+  \arg\max_x
+  \left[
+  -\frac{1}{2\sigma_n^2}
+  \left\|T_M(x)-y\right\|_2^2
+  +\log p(x)
+  \right].
+  \]
+
+  <p>
+    这个公式包含两部分。第一项要求重建出的 tomogram 在经过前向算子 \(T_M\) 之后，能够与观测到的 missing-wedge tomogram 保持一致。第二项是先验项，它要求重建结果看起来像一个合理的生物 tomogram。
+  </p>
+
+  <p>
+    关键困难在于，完整 tomogram 的真实先验分布 \(p(x)\) 是未知的，因为我们无法获得 ground-truth full tomograms。CryoGEN 使用 energy-based prior 来刻画这一先验分布：
+  </p>
+
+  \[
+  p(x)=
+  \frac{1}{Z}
+  \exp(-E_x(x)),
+  \]
+
+  <p>
+    其中，\(E_x(x)\) 是能量函数，\(Z\) 是配分函数。低能量样本对应更合理的重建结果，而高能量样本则对应不真实或包含伪影的重建结果。
+  </p>
+
+  <p>
+    引入这个先验之后，MAP 目标也可以等价地看成最小化：
+  </p>
+
+  \[
+  \frac{1}{2\sigma_n^2}
+  \left\|T_M(x)-y\right\|_2^2
+  +
+  E_x(x).
+  \]
+
+  <p>
+    这个式子给出了非常直观的解释：CryoGEN 希望得到的重建结果既要和观测数据一致，又要位于生物 tomogram 先验分布中的低能量区域。
+  </p>
+
+  <p>
+    CryoGEN 的核心动机之一，是 Cryo-ET 重建本质上的一对多问题。由于 \(T_M\) 会移除信息，两个不同的完整 tomogram \(x_1\) 和 \(x_2\) 可能对应同一个观测 tomogram \(y\)：
+  </p>
+
+  \[
+  T_M(x_1)=T_M(x_2)=y.
+  \]
+
+  <p>
+    如果使用简单重建损失训练一个确定性模型，模型可能会学到一个平均化的解：
+  </p>
+
+  \[
+  \bar{x}=\frac{1}{2}(x_1+x_2).
+  \]
+
+  <p>
+    然而，这个平均结果并不一定对应一个真实合理的生物结构。在能量景观中，\(x_1\) 和 \(x_2\) 可能都是低能量的合理解，但 \(\bar{x}\) 可能位于它们之间的高能量区域。也就是说，多个合理解的平均并不一定仍然合理。
+  </p>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/3_3_1.png' | relative_url }}" alt="展示多个合理低能量解和不合理平均解的 energy landscape">
+    <figcaption>图 3.6. CryoGEN 的 energy landscape 动机。多个合理重建结果可以对应低能量极小值，而确定性平均解可能落在更高能量区域，因此不一定代表真实合理的生物结构。</figcaption>
+  </figure>
+
+  <p>
+    为了解决这种一对多歧义，CryoGEN 在 reconstructor 中引入随机噪声：
+  </p>
+
+  \[
+  \hat{x}=g_\theta(y+\epsilon_g),
+  \qquad
+  \epsilon_g\sim\mathcal{N}(0,\sigma_g^2I).
+  \]
+
+  <p>
+    其中，\(g_\theta\) 是预测模型。加入噪声 \(\epsilon_g\) 后，同一个观测 \(y\) 可以被映射到不同的合理重建结果，而不是被迫输出一个确定性的平均解。从这个意义上说，CryoGEN 将重建过程从一对一映射转化为条件生成过程。
+  </p>
+
+  <p>
+    剩下的问题是：在没有 ground-truth complete tomograms 的情况下，如何学习这个能量先验？CryoGEN 使用了一个重要假设：如果某个重建出的 \(x\) 是合理的，那么它经过旋转和 missing-wedge 投影之后得到的 \(T_M(Rx)\)，也应该看起来像一个真实观测到的 tomogram。因此，CryoGEN 并不直接在完整 tomogram 空间 \(X\) 中学习能量，而是在可观测的 missing-wedge 空间 \(Y\) 中学习。
+  </p>
+
+  <p>
+    在实际实现中，这个能量模型通过 GAN-based adversarial formulation 来实现。模型会比较真实观测 tomogram \(y+\epsilon\) 和由 reconstructor 生成后再投影得到的观测 \(T_M(Rg_\theta(y+\epsilon_g))\)。概念上，对抗目标可以写作：
+  </p>
+
+  \[
+  \max_\phi \min_\theta
+  \mathbb{E}
+  \left[
+  \frac{1}{|\mathcal{R}|}
+  \sum_{R\in\mathcal{R}}
+  E_\phi
+  \left(
+  T_M(Rg_\theta(y+\epsilon_g))
+  \right)
+  -
+  E_\phi(y+\epsilon)
+  \right].
+  \]
+
+  <p>
+    其中，\(E_\phi\) 扮演 energy model，也可以理解为类似 discriminator 的先验模型。它学习区分真实观测和模型生成的观测，而 \(g_\theta\) 则被训练成生成这样的重建结果：经过 \(T_M\) 和旋转投影之后，其分布能够匹配真实观测 tomogram 的分布。
+  </p>
+
+  <p>
+    CryoGEN 也保留了一个与自监督重建思想类似的 consistency term。这个项鼓励预测出的 tomogram 在经过旋转、人造 missing-wedge 退化和再次重建后仍然保持一致：
+  </p>
+
+  \[
+  \mathcal{L}_{\text{cons}}
+  =
+  \mathbb{E}
+  \left[
+  \frac{1}{|\mathcal{R}|}
+  \sum_{R\in\mathcal{R}}
+  \left\|
+  R^{-1}
+  g_{\theta'}
+  \left(
+  T_M(R(g_\theta(y)+\epsilon_h))
+  \right)
+  -
+  g_\theta(y)
+  \right\|_2^2
+  \right].
+  \]
+
+  <p>
+    这一项保留了 IsoNet 类方法中有用的自监督信号，而 energy-based prior 则进一步提供了分布层面的约束。
+  </p>
+
+  <p>
+    总体来说，CryoGEN 的训练目标可以理解为三种力量的结合：
+  </p>
+
+  <ul>
+    <li>数据一致性，即要求 \(T_M(g_\theta(y+\epsilon_g))\) 与观测到的 \(y\) 保持一致。</li>
+    <li>自监督一致性，即在旋转和模拟 missing-wedge 退化下保持重建稳定。</li>
+    <li>基于能量的先验匹配，即鼓励生成的重建结果落在合理生物 tomogram 的分布上。</li>
+  </ul>
+
+  <p>
+    在推理阶段，CryoGEN 不再需要进行大量递归式 refinement。输入 tomogram 会被划分为多个重叠的 subtomograms，每个 subtomogram 经过训练好的预测模型 \(g_\theta\) 得到校正结果，随后这些 subtomograms 会被重新组装成完整 tomogram。重叠区域会进行加权平均，以减少边界伪影。
+  </p>
+
+  <p>
+    CryoGEN 的实际优势在于，它保留了直接预测的效率，同时避免了确定性平均带来的问题。随机噪声提高了输出多样性，reconstructor 负责自监督重建，而 GAN-based energy model 则负责判断重建结果对应的先验是否足够真实。
+  </p>
+
+  <p>
+    在实验中，CryoGEN 能够得到更完整的重建结果、更高的对比度、更少的伪影，以及在傅里叶域中更加一致的频率分布。与 IsoNet 这类递归式方法相比，它还显著减少了训练时间，在论文实验中实现了约 10 倍的加速。
+  </p>
+
+  <div class="figure-row">
+    <figure>
+      <img src="{{ '/blogs/cryo-et/3_3_2.png' | relative_url }}" alt="CryoGEN 在合成结构上与 WBP、IsoNet 和真实结构的对比">
+      <figcaption>图 3.7. CryoGEN 在合成结构上的重建结果。与 WBP 和 IsoNet 相比，CryoGEN 得到的校正结果更加完整、更加接近真实结构。</figcaption>
+    </figure>
+    <figure>
+      <img src="{{ '/blogs/cryo-et/3_3_3.png' | relative_url }}" alt="IsoNet 与 CryoGEN 校正纯化核糖体 tomogram 的结果和傅里叶域对比">
+      <figcaption>图 3.8. CryoGEN 在纯化核糖体 tomogram 上的结果。与 IsoNet 相比，CryoGEN 提升了对比度和结构连续性，傅里叶域中也显示出更一致的频率分布。</figcaption>
+    </figure>
+  </div>
 
   <h3>3.4 CryoGEN-II</h3>
 
