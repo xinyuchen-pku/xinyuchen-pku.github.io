@@ -263,6 +263,159 @@ permalink: /blogs/cryo-et/
 
   <h3>2.4 Tilt Series Correction</h3>
 
+  <p>
+    Tilt series correction is an optional but important preprocessing step in Cryo-ET. Its main purpose is to correct the distortions introduced by the electron microscope imaging system before tomographic reconstruction. One of the most important corrections is CTF correction, where CTF stands for contrast transfer function.
+  </p>
+
+  <h4>Source of CTF</h4>
+
+  <p>
+    In cryo-EM and Cryo-ET imaging, the microscope is often intentionally operated with a small defocus. Defocus enhances phase contrast, making weakly scattering biological samples more visible. However, this also means that the scattered and unscattered electron waves accumulate different phase shifts before reaching the detector.
+  </p>
+
+  <p>
+    The effect of the electron optical system on different spatial frequencies is described by the contrast transfer function. A commonly used form of the CTF is
+  </p>
+
+  \[
+  \mathrm{CTF}(k)=
+  \left[
+  -\sqrt{1-A^2}\sin \chi(k)
+  +A\cos \chi(k)
+  \right]
+  \cdot e^{-Bk^2/4}.
+  \]
+
+  <p>
+    Here, \(k\) denotes spatial frequency, \(A\) is the amplitude contrast ratio, and \(e^{-Bk^2/4}\) is an envelope term that describes the decay of high-frequency information. The phase shift \(\chi(k)\) is usually determined by parameters such as defocus, electron wavelength, and spherical aberration:
+  </p>
+
+  \[
+  \chi(k)=
+  \pi \lambda \Delta f k^2
+  +\frac{\pi}{2}C_s\lambda^3 k^4.
+  \]
+
+  <p>
+    Here, \(\lambda\) is the electron wavelength, \(\Delta f\) is the defocus value, and \(C_s\) is the spherical aberration coefficient.
+  </p>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/2_4_1.png' | relative_url }}" alt="Contrast transfer function visualization in electron microscopy software">
+    <figcaption>Figure 2.5. Visualization of the contrast transfer function in electron microscopy. Defocus, accelerating voltage, and spherical aberration determine how different spatial frequencies are transferred, producing oscillations and zero crossings in the CTF curve.</figcaption>
+  </figure>
+
+  <p>
+    The CTF mainly causes two problems. First, it can become negative at certain spatial frequencies, which leads to phase flipping: bright and dark density contrasts are reversed. Second, the envelope term suppresses high-frequency signals, making fine structural details weaker or blurred.
+  </p>
+
+  <h4>Wiener Filter for CTF Correction</h4>
+
+  <p>
+    To understand CTF correction, we can write the imaging process in Fourier space as
+  </p>
+
+  \[
+  Y(k)=H(k)X(k)+N(k),
+  \]
+
+  <p>
+    where \(Y(k)\) is the observed image in Fourier space, \(X(k)\) is the unknown clean signal, \(H(k)\) is the CTF, and \(N(k)\) is noise.
+  </p>
+
+  <p>
+    A direct inverse would estimate the clean signal as
+  </p>
+
+  \[
+  \hat{X}(k)=\frac{Y(k)}{H(k)}.
+  \]
+
+  <p>
+    However, this is unstable. When \(H(k)\) is close to zero, even a small amount of noise will be greatly amplified. Therefore, instead of directly dividing by the CTF, we use a Wiener filter, which balances signal recovery and noise suppression.
+  </p>
+
+  <p>
+    Assume that we estimate \(X(k)\) using a linear filter \(G(k)\):
+  </p>
+
+  \[
+  \hat{X}(k)=G(k)Y(k).
+  \]
+
+  <p>
+    The goal is to choose \(G(k)\) to minimize the mean squared error:
+  </p>
+
+  \[
+  \mathbb{E}\left[|\hat{X}(k)-X(k)|^2\right].
+  \]
+
+  <p>
+    Substituting \(Y(k)=H(k)X(k)+N(k)\), we get
+  </p>
+
+  \[
+  \hat{X}(k)-X(k)=
+  (G(k)H(k)-1)X(k)+G(k)N(k).
+  \]
+
+  <p>
+    Assuming that the clean signal and noise are uncorrelated, the expected error becomes
+  </p>
+
+  \[
+  \mathbb{E}\left[|\hat{X}(k)-X(k)|^2\right]
+  =
+  |G(k)H(k)-1|^2 S_X(k)
+  +
+  |G(k)|^2 S_N(k),
+  \]
+
+  <p>
+    where \(S_X(k)\) and \(S_N(k)\) are the power spectra of the clean signal and noise.
+  </p>
+
+  <p>
+    Minimizing this expression with respect to \(G(k)\) gives the Wiener filter:
+  </p>
+
+  \[
+  G(k)=
+  \frac{H^*(k)S_X(k)}
+  {|H(k)|^2S_X(k)+S_N(k)}.
+  \]
+
+  <p>
+    Equivalently,
+  </p>
+
+  \[
+  G(k)=
+  \frac{H^*(k)}
+  {|H(k)|^2+\frac{S_N(k)}{S_X(k)}}.
+  \]
+
+  <p>
+    Therefore, the Wiener-filtered estimate is
+  </p>
+
+  \[
+  \hat{X}(k)=
+  \frac{H^*(k)}
+  {|H(k)|^2+\frac{S_N(k)}{S_X(k)}}
+  Y(k).
+  \]
+
+  <p>
+    When \(H(k)\) is large and the signal-to-noise ratio is high, the Wiener filter behaves similarly to inverse filtering. When \(H(k)\) is small or the noise level is high, the denominator prevents excessive noise amplification. This is why Wiener filtering is more stable than direct CTF inversion.
+  </p>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/2_4_2.png' | relative_url }}" alt="Comparison of unfiltered and filtered cryo-ET images">
+    <figcaption>Figure 2.6. Example of filtering-based image improvement. Compared with the unfiltered image, the processed result suppresses high-frequency noise and makes membrane-like structures and fine cellular features easier to distinguish.</figcaption>
+  </figure>
+
   <h3>2.5 Tomogram Reconstruction</h3>
 
   <h2>3. Classical Reconstruction Methods</h2>
@@ -544,6 +697,159 @@ permalink: /blogs/cryo-et/
   </figure>
 
   <h3>2.4 倾斜序列校正</h3>
+
+  <p>
+    倾斜序列校正是 Cryo-ET 流程中一个可选但重要的预处理步骤。它的主要目标是在 tomographic reconstruction 之前，校正电镜成像系统对图像信号引入的调制和失真。其中最重要的校正之一是 CTF 校正，CTF 指的是对比度转换函数（contrast transfer function）。
+  </p>
+
+  <h4>CTF 的来源</h4>
+
+  <p>
+    在 cryo-EM 和 Cryo-ET 成像中，电镜通常会被有意设置为轻微离焦状态。离焦可以增强相位对比度，使弱散射的生物样本更容易被观察到。但同时，离焦也会使散射波和未散射波在到达探测器之前积累不同的相位差。
+  </p>
+
+  <p>
+    电镜光学系统对不同空间频率信号的调制作用可以用对比度转换函数来描述。CTF 的一种常见形式为
+  </p>
+
+  \[
+  \mathrm{CTF}(k)=
+  \left[
+  -\sqrt{1-A^2}\sin \chi(k)
+  +A\cos \chi(k)
+  \right]
+  \cdot e^{-Bk^2/4}.
+  \]
+
+  <p>
+    其中，\(k\) 表示空间频率，\(A\) 是振幅对比度比例，\(e^{-Bk^2/4}\) 是包络项，用于描述高频信息的衰减。相位函数 \(\chi(k)\) 通常由离焦量、电子波长和球差等参数决定：
+  </p>
+
+  \[
+  \chi(k)=
+  \pi \lambda \Delta f k^2
+  +\frac{\pi}{2}C_s\lambda^3 k^4.
+  \]
+
+  <p>
+    其中，\(\lambda\) 表示电子波长，\(\Delta f\) 表示离焦量，\(C_s\) 表示球差系数。
+  </p>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/2_4_1.png' | relative_url }}" alt="电镜软件中的 CTF 曲线可视化">
+    <figcaption>图 2.5. 电镜成像中的 CTF 可视化示例。离焦量、加速电压和球差等参数共同决定不同空间频率信号的传递方式，并在 CTF 曲线中表现为振荡和零点交叉。</figcaption>
+  </figure>
+
+  <p>
+    CTF 主要带来两个问题。第一，在某些空间频率处，CTF 的值可能为负，这会导致相位反转，即原本的亮暗密度对比被翻转。第二，包络项会抑制高频信号，使精细结构信息变弱或变模糊。
+  </p>
+
+  <h4>用于 CTF 校正的 Wiener Filter</h4>
+
+  <p>
+    为了理解 CTF 校正，可以将成像过程写成傅里叶空间中的形式：
+  </p>
+
+  \[
+  Y(k)=H(k)X(k)+N(k),
+  \]
+
+  <p>
+    其中，\(Y(k)\) 表示观测图像的傅里叶表示，\(X(k)\) 表示未知的真实信号，\(H(k)\) 表示 CTF，\(N(k)\) 表示噪声。
+  </p>
+
+  <p>
+    最直接的逆滤波方法可以写作
+  </p>
+
+  \[
+  \hat{X}(k)=\frac{Y(k)}{H(k)}.
+  \]
+
+  <p>
+    然而，这种直接相除是不稳定的。当 \(H(k)\) 接近 0 时，即使很小的噪声也会被严重放大。因此，实际中通常不会直接除以 CTF，而是使用 Wiener filter，在恢复信号和抑制噪声之间进行平衡。
+  </p>
+
+  <p>
+    假设我们用一个线性滤波器 \(G(k)\) 来估计 \(X(k)\)：
+  </p>
+
+  \[
+  \hat{X}(k)=G(k)Y(k).
+  \]
+
+  <p>
+    我们的目标是选择合适的 \(G(k)\)，使均方误差最小：
+  </p>
+
+  \[
+  \mathbb{E}\left[|\hat{X}(k)-X(k)|^2\right].
+  \]
+
+  <p>
+    将 \(Y(k)=H(k)X(k)+N(k)\) 代入，可以得到
+  </p>
+
+  \[
+  \hat{X}(k)-X(k)=
+  (G(k)H(k)-1)X(k)+G(k)N(k).
+  \]
+
+  <p>
+    假设真实信号和噪声不相关，则期望误差可以写成
+  </p>
+
+  \[
+  \mathbb{E}\left[|\hat{X}(k)-X(k)|^2\right]
+  =
+  |G(k)H(k)-1|^2 S_X(k)
+  +
+  |G(k)|^2 S_N(k),
+  \]
+
+  <p>
+    其中，\(S_X(k)\) 和 \(S_N(k)\) 分别表示真实信号和噪声的功率谱。
+  </p>
+
+  <p>
+    对 \(G(k)\) 最小化上述误差，可以得到 Wiener filter：
+  </p>
+
+  \[
+  G(k)=
+  \frac{H^*(k)S_X(k)}
+  {|H(k)|^2S_X(k)+S_N(k)}.
+  \]
+
+  <p>
+    等价地，可以写成
+  </p>
+
+  \[
+  G(k)=
+  \frac{H^*(k)}
+  {|H(k)|^2+\frac{S_N(k)}{S_X(k)}}.
+  \]
+
+  <p>
+    因此，经过 Wiener filter 校正后的估计为
+  </p>
+
+  \[
+  \hat{X}(k)=
+  \frac{H^*(k)}
+  {|H(k)|^2+\frac{S_N(k)}{S_X(k)}}
+  Y(k).
+  \]
+
+  <p>
+    当 \(H(k)\) 较大且信噪比较高时，Wiener filter 的行为接近直接逆滤波；当 \(H(k)\) 较小或噪声较强时，分母中的正则项会避免噪声被过度放大。因此，Wiener filter 比直接 CTF 反卷积更加稳定。
+  </p>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/2_4_2.png' | relative_url }}" alt="滤波处理前后的 Cryo-ET 图像对比">
+    <figcaption>图 2.6. 基于滤波处理的图像改善示例。与未处理图像相比，滤波后的结果抑制了高频噪声，使膜状结构和细胞内部细节更加容易辨认。</figcaption>
+  </figure>
 
   <h3>2.5 Tomogram 重建</h3>
 
