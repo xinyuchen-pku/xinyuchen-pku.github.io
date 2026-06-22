@@ -976,6 +976,214 @@ permalink: /blogs/cryo-et/
 
   <h3>3.4 CryoGEN-II</h3>
 
+  <p>
+    CryoGEN-II further rethinks Cryo-ET reconstruction from the perspective of variational inference. Its motivation comes from the complementary strengths and weaknesses of IsoNet and CryoGEN. IsoNet can be viewed as a recursive refinement method: it is relatively stable, but the iterative refinement process is slow. CryoGEN formulates reconstruction from a Bayesian maximum a posteriori perspective: it is efficient and generative, but adversarial prior matching can introduce training instability.
+  </p>
+
+  <p>
+    Before introducing the formulation, we can summarize this complementarity as follows:
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Property</th>
+        <th>CryoGEN</th>
+        <th>IsoNet</th>
+        <th>CryoGEN-II</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th>Stable training</th>
+        <td>×</td>
+        <td>✓</td>
+        <td>✓</td>
+      </tr>
+      <tr>
+        <th>Fast convergence</th>
+        <td>✓</td>
+        <td>×</td>
+        <td>✓</td>
+      </tr>
+      <tr>
+        <th>Explicit latent model</th>
+        <td>✓</td>
+        <td>×</td>
+        <td>✓</td>
+      </tr>
+      <tr>
+        <th>Consistency-based objective</th>
+        <td>×</td>
+        <td>✓</td>
+        <td>✓</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    The key idea of CryoGEN-II is to put these two views into a unified variational inference framework. In this framework, the observed missing-wedge tomogram \(y\) is treated as the observation, while the complete tomogram \(x\) is treated as a latent variable. Instead of directly predicting a single deterministic reconstruction, the model learns an approximate posterior distribution \(q_\phi(x|y)\), which represents plausible complete tomograms conditioned on the observed incomplete tomogram.
+  </p>
+
+  <p>
+    The Cryo-ET forward process is still described by the missing-wedge operator:
+  </p>
+
+  \[
+  y=T_M(x)+\epsilon_n,
+  \qquad
+  \epsilon_n\sim\mathcal{N}(0,\sigma_n^2I).
+  \]
+
+  <p>
+    Here, \(T_M\) removes the unobserved Fourier-space information caused by limited-angle acquisition. Since \(T_M\) is a many-to-one operator, recovering \(x\) from \(y\) is an ill-posed inverse problem.
+  </p>
+
+  <p>
+    From the variational inference perspective, the goal is to maximize the evidence lower bound, or ELBO. Equivalently, this can be written as minimizing a reconstruction consistency term plus a prior matching term:
+  </p>
+
+  \[
+  \frac{1}{2\sigma_n^2}
+  \mathcal{L}_{\mathrm{cons}}(q_\phi)
+  +
+  D_{\mathrm{KL}}
+  \left(
+  q_\phi(x|y)\,\|\,p(x)
+  \right).
+  \]
+
+  <p>
+    The first term requires the inferred latent tomogram to reproduce the observed tomogram after applying the missing-wedge operator. This corresponds to the reconstruction consistency idea in IsoNet. The second term requires the inferred posterior to match the prior distribution of plausible complete tomograms, which corresponds to the prior matching idea in CryoGEN.
+  </p>
+
+  <p>
+    This gives CryoGEN-II an EM-style interpretation. In the E-step, the model performs prior matching, pushing the inferred latent distribution toward the desired prior distribution. This is conceptually close to CryoGEN. In the M-step, the model performs reconstruction, making sure that the inferred latent tomogram can reproduce the observed missing-wedge tomogram. This is conceptually close to IsoNet.
+  </p>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/3_4_1.png' | relative_url }}" alt="EM-style CryoGEN-II variational inference framework">
+    <figcaption>Figure 3.9. EM-style interpretation of CryoGEN-II. The framework alternates between an E-step that matches latent reconstructions to a plausible prior distribution and an M-step that enforces data consistency through the missing-wedge forward operator.</figcaption>
+  </figure>
+
+  <p>
+    More concretely, CryoGEN-II adopts a WAE-style formulation. Instead of forcing every sample-level posterior \(q_\phi(x|y)\) to independently match the prior, it matches the aggregated posterior to the prior:
+  </p>
+
+  \[
+  q_\phi(x)=
+  \int q_\phi(x|y)p_{\mathrm{data}}(y)\,dy.
+  \]
+
+  <p>
+    A simplified objective can be written as:
+  </p>
+
+  \[
+  \frac{1}{|\mathcal{Y}|}
+  \sum_{y\in\mathcal{Y}}
+  \left\|
+  AE_\phi(y)-y
+  \right\|_2^2
+  +
+  \lambda
+  D
+  \left(
+  q_\phi(x),p(x)
+  \right).
+  \]
+
+  <p>
+    Here, \(E_\phi(y)\) denotes the inferred latent complete tomogram, \(A\) denotes the forward missing-wedge degradation operator, and \(D(q_\phi(x),p(x))\) measures the discrepancy between the aggregated posterior and the prior. The first term is the reconstruction term, while the second term is the prior matching term.
+  </p>
+
+  <p>
+    This design is important because matching the aggregated posterior is less restrictive than forcing every individual posterior \(q_\phi(x|y)\) to match the prior exactly. In practice, this helps reduce posterior collapse, improves training stability, and better preserves real structural information.
+  </p>
+
+  <p>
+    The divergence term \(D\) can be implemented in different ways. One option is MMD-based matching, which compares distributions through kernel statistics and tends to be stable. Another option is WGAN-based matching, which uses an adversarial critic to distinguish samples from the aggregated posterior and the prior, and often scales better to high-dimensional spaces.
+  </p>
+
+  <p>
+    In this formulation, CryoGEN-II combines the advantages of both previous methods. From IsoNet, it inherits the consistency-based reconstruction objective, which stabilizes the learning process. From CryoGEN, it inherits the generative prior matching mechanism, which improves efficiency and avoids purely deterministic reconstruction.
+  </p>
+
+  <p>
+    A further improvement in CryoGEN-II is the use of Sharpness-Aware Minimization, or SAM, in the latent prior space. The motivation is that Cryo-ET reconstruction is highly non-convex, and ordinary optimization may converge to sharp minima that are sensitive to small perturbations. A flatter minimum is usually more stable and more likely to preserve robust structural patterns.
+  </p>
+
+  <p>
+    For a latent reconstruction \(\tilde{x}_i\), CryoGEN-II first computes the gradient direction:
+  </p>
+
+  \[
+  u_i
+  \leftarrow
+  \nabla_{\tilde{x}_i}
+  L(\tilde{x}_i).
+  \]
+
+  <p>
+    Then it perturbs the latent code along the normalized gradient direction:
+  </p>
+
+  \[
+  \tilde{x}_i^+
+  \leftarrow
+  \tilde{x}_i
+  +
+  \rho
+  \frac{u_i}{\|u_i\|_2}.
+  \]
+
+  <p>
+    The model is optimized using the loss evaluated at the perturbed latent code:
+  </p>
+
+  \[
+  L_{\mathrm{SAM}}
+  =
+  L(\tilde{x}_i^+)
+  +
+  \frac{\gamma}{2}
+  \|\phi-\theta\|_2^2.
+  \]
+
+  <p>
+    The first term encourages the model to remain accurate even under adversarial latent perturbations, while the second term encourages alignment between the encoder and decoder parameters. In this way, SAM guides the optimization toward flatter regions of the latent loss landscape and improves training robustness.
+  </p>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/3_4_2.png' | relative_url }}" alt="Sharpness-Aware Minimization in the latent loss landscape">
+    <figcaption>Figure 3.10. Sharpness-Aware Minimization in CryoGEN-II. SAM favors flatter and more stable regions of the latent loss landscape instead of sharp minima that are sensitive to small perturbations.</figcaption>
+  </figure>
+
+  <p>
+    Overall, CryoGEN-II can be summarized as a variational framework with three key components:
+  </p>
+
+  <ul>
+    <li>A reconstruction term, which ensures that the inferred tomogram remains consistent with the observed missing-wedge tomogram.</li>
+    <li>An aggregated posterior matching term, which aligns the inferred latent distribution with the prior distribution of plausible complete tomograms.</li>
+    <li>A latent-space SAM term, which improves optimization stability and avoids sharp, unstable solutions.</li>
+  </ul>
+
+  <p>
+    In experiments, CryoGEN-II improves reconstruction stability and structural fidelity compared with CryoGEN. It suppresses artifacts more effectively, preserves sharper structural boundaries, and produces cleaner tomograms on biological datasets such as immature HIV capsids and purified ribosomes.
+  </p>
+
+  <div class="figure-row equal">
+    <figure>
+      <img src="{{ '/blogs/cryo-et/3_4_3.png' | relative_url }}" alt="CryoGEN and CryoGEN-II reconstruction comparison on immature HIV capsids">
+      <figcaption>Figure 3.11. CryoGEN-II result on immature HIV capsids. Compared with CryoGEN, CryoGEN-II preserves clearer capsid boundaries and reduces artifacts while maintaining structural consistency across orthogonal views.</figcaption>
+    </figure>
+    <figure>
+      <img src="{{ '/blogs/cryo-et/3_4_4.png' | relative_url }}" alt="CryoGEN and CryoGEN-II reconstruction comparison on purified ribosomes">
+      <figcaption>Figure 3.12. CryoGEN-II result on purified ribosomes. CryoGEN-II produces cleaner density, sharper particle boundaries, and fewer directional artifacts than the original CryoGEN reconstruction.</figcaption>
+    </figure>
+  </div>
+
   <h2>4. Takeaway Messages</h2>
 </article>
 
@@ -1950,6 +2158,214 @@ permalink: /blogs/cryo-et/
   </div>
 
   <h3>3.4 CryoGEN-II</h3>
+
+  <p>
+    CryoGEN-II 从变分推断的角度进一步重新思考 Cryo-ET 重建。它的动机来自 IsoNet 和 CryoGEN 的互补性。IsoNet 可以看作一种 recursive refinement 方法：训练相对稳定，但迭代 refinement 过程较慢。CryoGEN 则从贝叶斯最大后验的角度建模重建问题：它具有较高效率和生成能力，但对抗式 prior matching 可能带来训练不稳定。
+  </p>
+
+  <p>
+    在介绍 formulation 之前，可以先用下面的表格总结二者的互补特点：
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>属性</th>
+        <th>CryoGEN</th>
+        <th>IsoNet</th>
+        <th>CryoGEN-II</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th>训练稳定性</th>
+        <td>×</td>
+        <td>✓</td>
+        <td>✓</td>
+      </tr>
+      <tr>
+        <th>快速收敛</th>
+        <td>✓</td>
+        <td>×</td>
+        <td>✓</td>
+      </tr>
+      <tr>
+        <th>显式潜在变量模型</th>
+        <td>✓</td>
+        <td>×</td>
+        <td>✓</td>
+      </tr>
+      <tr>
+        <th>基于一致性的重建目标</th>
+        <td>×</td>
+        <td>✓</td>
+        <td>✓</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    CryoGEN-II 的核心思想是将这两种视角放入统一的变分推断框架中。在这个框架中，观测到的 missing-wedge tomogram \(y\) 被看作观测变量，而完整 tomogram \(x\) 被看作潜在变量。模型不再只是直接预测一个确定性的重建结果，而是学习一个近似后验分布 \(q_\phi(x|y)\)，表示在给定不完整观测 \(y\) 的条件下可能存在的完整 tomograms。
+  </p>
+
+  <p>
+    Cryo-ET 的前向过程仍然由 missing-wedge operator 描述：
+  </p>
+
+  \[
+  y=T_M(x)+\epsilon_n,
+  \qquad
+  \epsilon_n\sim\mathcal{N}(0,\sigma_n^2I).
+  \]
+
+  <p>
+    其中，\(T_M\) 会移除由于有限角度采集导致的未观测傅里叶信息。由于 \(T_M\) 是一个 many-to-one operator，从 \(y\) 恢复 \(x\) 是一个病态逆问题。
+  </p>
+
+  <p>
+    从变分推断角度看，目标是最大化 evidence lower bound，也就是 ELBO。等价地，这可以写成最小化一个 reconstruction consistency term 加上一个 prior matching term：
+  </p>
+
+  \[
+  \frac{1}{2\sigma_n^2}
+  \mathcal{L}_{\mathrm{cons}}(q_\phi)
+  +
+  D_{\mathrm{KL}}
+  \left(
+  q_\phi(x|y)\,\|\,p(x)
+  \right).
+  \]
+
+  <p>
+    第一项要求推断出的潜在 tomogram 在经过 missing-wedge operator 后能够重新生成观测 tomogram，这对应 IsoNet 中的 reconstruction consistency 思想。第二项要求推断出的后验分布匹配合理完整 tomograms 的先验分布，这对应 CryoGEN 中的 prior matching 思想。
+  </p>
+
+  <p>
+    因此，CryoGEN-II 可以被理解为一种 EM-style 的迭代框架。在 E-step 中，模型进行 prior matching，将推断出的潜在分布推向目标先验分布，这在思想上接近 CryoGEN。在 M-step 中，模型进行 reconstruction，确保推断出的潜在 tomogram 能够重新生成观测到的 missing-wedge tomogram，这在思想上接近 IsoNet。
+  </p>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/3_4_1.png' | relative_url }}" alt="CryoGEN-II 的 EM-style 变分推断框架">
+    <figcaption>图 3.9. CryoGEN-II 的 EM-style 解释。该框架在 E-step 中进行潜在重建与合理先验分布之间的匹配，在 M-step 中通过 missing-wedge 前向算子约束数据一致性。</figcaption>
+  </figure>
+
+  <p>
+    更具体地说，CryoGEN-II 使用 WAE-style formulation。它并不强制每个样本级别的后验 \(q_\phi(x|y)\) 都单独匹配先验，而是让聚合后验匹配先验：
+  </p>
+
+  \[
+  q_\phi(x)=
+  \int q_\phi(x|y)p_{\mathrm{data}}(y)\,dy.
+  \]
+
+  <p>
+    一个简化的目标函数可以写成：
+  </p>
+
+  \[
+  \frac{1}{|\mathcal{Y}|}
+  \sum_{y\in\mathcal{Y}}
+  \left\|
+  AE_\phi(y)-y
+  \right\|_2^2
+  +
+  \lambda
+  D
+  \left(
+  q_\phi(x),p(x)
+  \right).
+  \]
+
+  <p>
+    其中，\(E_\phi(y)\) 表示推断出的潜在完整 tomogram，\(A\) 表示前向 missing-wedge 退化算子，\(D(q_\phi(x),p(x))\) 表示聚合后验与先验分布之间的差异。第一项是重建项，第二项是先验匹配项。
+  </p>
+
+  <p>
+    这种设计很重要，因为匹配聚合后验比分别强制每个 \(q_\phi(x|y)\) 精确匹配先验更加灵活。在实际训练中，这有助于减少 posterior collapse，提高训练稳定性，并更好地保留真实结构信息。
+  </p>
+
+  <p>
+    散度项 \(D\) 可以用不同方式实现。一种选择是 MMD-based matching，它通过 kernel statistics 比较两个分布，通常训练较稳定。另一种选择是 WGAN-based matching，它使用 adversarial critic 区分来自聚合后验和先验的样本，通常更适合高维空间。
+  </p>
+
+  <p>
+    在这个 formulation 中，CryoGEN-II 结合了前两类方法的优势。它从 IsoNet 中继承了 consistency-based reconstruction objective，从而提升训练稳定性；又从 CryoGEN 中继承了 generative prior matching mechanism，从而提高效率，并避免纯确定性重建的局限。
+  </p>
+
+  <p>
+    CryoGEN-II 的另一个重要改进，是在潜在先验空间中引入 Sharpness-Aware Minimization，也就是 SAM。其动机在于，Cryo-ET 重建问题高度非凸，普通优化过程可能收敛到对小扰动非常敏感的尖锐极小值。相比之下，更平坦的极小值通常更加稳定，也更有利于保留稳健的结构模式。
+  </p>
+
+  <p>
+    对于一个潜在重建 \(\tilde{x}_i\)，CryoGEN-II 首先计算梯度方向：
+  </p>
+
+  \[
+  u_i
+  \leftarrow
+  \nabla_{\tilde{x}_i}
+  L(\tilde{x}_i).
+  \]
+
+  <p>
+    随后，它沿归一化梯度方向对潜在变量进行扰动：
+  </p>
+
+  \[
+  \tilde{x}_i^+
+  \leftarrow
+  \tilde{x}_i
+  +
+  \rho
+  \frac{u_i}{\|u_i\|_2}.
+  \]
+
+  <p>
+    模型随后使用扰动后的潜在变量来计算并优化损失：
+  </p>
+
+  \[
+  L_{\mathrm{SAM}}
+  =
+  L(\tilde{x}_i^+)
+  +
+  \frac{\gamma}{2}
+  \|\phi-\theta\|_2^2.
+  \]
+
+  <p>
+    第一项要求模型在潜在变量受到对抗扰动后仍然保持准确，第二项则用于鼓励 encoder 和 decoder 参数之间的一致性。通过这种方式，SAM 会引导优化过程走向潜在损失景观中更平坦的区域，从而提高训练鲁棒性。
+  </p>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/3_4_2.png' | relative_url }}" alt="潜在损失景观中的 Sharpness-Aware Minimization 示意图">
+    <figcaption>图 3.10. CryoGEN-II 中的 Sharpness-Aware Minimization。SAM 倾向于选择更平坦、更稳定的潜在损失区域，而不是对微小扰动敏感的尖锐极小值。</figcaption>
+  </figure>
+
+  <p>
+    总体来看，CryoGEN-II 可以概括为一个包含三个关键部分的变分框架：
+  </p>
+
+  <ul>
+    <li>重建项：确保推断出的 tomogram 与观测到的 missing-wedge tomogram 保持一致。</li>
+    <li>聚合后验匹配项：使推断出的潜在分布与合理完整 tomogram 的先验分布对齐。</li>
+    <li>潜在空间 SAM 项：提高优化稳定性，避免收敛到尖锐且不稳定的解。</li>
+  </ul>
+
+  <p>
+    在实验中，相比 CryoGEN，CryoGEN-II 进一步提高了重建稳定性和结构保真度。它能够更有效地抑制伪影，保留更清晰的结构边界，并在 immature HIV capsids 和 purified ribosomes 等生物数据集上得到更加干净的 tomogram。
+  </p>
+
+  <div class="figure-row equal">
+    <figure>
+      <img src="{{ '/blogs/cryo-et/3_4_3.png' | relative_url }}" alt="CryoGEN 与 CryoGEN-II 在 immature HIV capsids 上的重建结果对比">
+      <figcaption>图 3.11. CryoGEN-II 在 immature HIV capsids 数据上的结果。与 CryoGEN 相比，CryoGEN-II 更好地保留 capsid 边界，减少伪影，并在正交视图中保持结构一致性。</figcaption>
+    </figure>
+    <figure>
+      <img src="{{ '/blogs/cryo-et/3_4_4.png' | relative_url }}" alt="CryoGEN 与 CryoGEN-II 在 purified ribosomes 上的重建结果对比">
+      <figcaption>图 3.12. CryoGEN-II 在 purified ribosomes 数据上的结果。相比原始 CryoGEN，CryoGEN-II 得到的密度更干净、颗粒边界更清晰，并减少了方向性伪影。</figcaption>
+    </figure>
+  </div>
 
   <h2>4. 总结</h2>
 </article>
