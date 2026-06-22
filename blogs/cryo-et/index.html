@@ -418,6 +418,199 @@ permalink: /blogs/cryo-et/
 
   <h3>2.5 Tomogram Reconstruction</h3>
 
+  <p>
+    After sampling, data collection, tilt series assembly, and optional correction, the final goal of Cryo-ET is to reconstruct a 3D tomogram from a series of 2D projection images. This is the core computational step of the workflow: given projections from different tilt angles, we want to recover the underlying 3D structure of the specimen.
+  </p>
+
+  <h4>Weighted Back Projection</h4>
+
+  <p>
+    The mathematical foundation of tomographic reconstruction is the central slice theorem. In the 2D case, suppose the object is \(f(x,y)\), and its projection at angle \(\theta\) is \(p_\theta(t)\). The projection can be written as integrating the object along lines perpendicular to the projection direction:
+  </p>
+
+  \[
+  p_\theta(t)=
+  \int\int f(x,y)\,
+  \delta(t-x\cos\theta-y\sin\theta)\,dx\,dy.
+  \]
+
+  <p>
+    Taking the one-dimensional Fourier transform of this projection gives
+  </p>
+
+  \[
+  P_\theta(k)=
+  \int p_\theta(t)e^{-i2\pi kt}\,dt.
+  \]
+
+  <p>
+    According to the central slice theorem, this is exactly equal to a slice through the two-dimensional Fourier transform of the object:
+  </p>
+
+  \[
+  P_\theta(k)=
+  F(k\cos\theta,k\sin\theta).
+  \]
+
+  <p>
+    In other words, each projection provides one radial line in Fourier space. If we collect enough projections from different angles, these Fourier slices can be combined to recover the original object.
+  </p>
+
+  <p>
+    A simple idea is back projection. For each projection \(p_\theta(t)\), we smear its value back along the corresponding projection direction and sum the contributions from all angles:
+  </p>
+
+  \[
+  f_{\mathrm{BP}}(x,y)=
+  \int_0^\pi
+  p_\theta(x\cos\theta+y\sin\theta)
+  \,d\theta.
+  \]
+
+  <p>
+    However, simple back projection produces a blurry reconstruction. The reason is that Fourier-space samples are not uniformly distributed. All radial slices pass through the origin, so low-frequency components near the origin are sampled many times, while high-frequency components farther away are sampled much more sparsely. This overemphasizes low-frequency information and makes the reconstructed image blurred.
+  </p>
+
+  <p>
+    Weighted Back Projection, or WBP, corrects this imbalance by applying a frequency-domain filter before back projection. The most common filter is the ramp filter, which multiplies each projection spectrum by \(|k|\). This suppresses the overrepresented low-frequency components and enhances high-frequency details:
+  </p>
+
+  \[
+  \tilde{P}_\theta(k)=
+  |k|P_\theta(k).
+  \]
+
+  <p>
+    After filtering, the reconstructed image can be written as
+  </p>
+
+  \[
+  f(x,y)=
+  \int_0^\pi
+  \left[
+  \int_{-\infty}^{\infty}
+  P_\theta(k)|k|
+  e^{i2\pi k(x\cos\theta+y\sin\theta)}
+  \,dk
+  \right]
+  d\theta.
+  \]
+
+  <p>
+    This is the basic idea of WBP: first filter each projection in Fourier space, then back-project the filtered projections into real space and accumulate them over all angles.
+  </p>
+
+  <h4>Simultaneous Iterative Reconstruction Technique</h4>
+
+  <p>
+    Another classical reconstruction method is Simultaneous Iterative Reconstruction Technique, or SIRT. Unlike WBP, which is based on direct analytical inversion, SIRT formulates tomographic reconstruction as a linear inverse problem.
+  </p>
+
+  <p>
+    After discretization, the unknown tomogram can be represented as a vector \(x\), and the measured projection data can be represented as a vector \(b\). The imaging process is modeled as
+  </p>
+
+  \[
+  Ax=b,
+  \]
+
+  <p>
+    where \(A\) is the system projection matrix. Each row of \(A\) describes how one projection ray passes through the voxels of the volume, and each element \(a_{ij}\) describes the contribution of voxel \(j\) to ray \(i\).
+  </p>
+
+  <p>
+    In practice, \(A\) is large, sparse, and ill-conditioned, and the number of equations is often not exactly equal to the number of unknowns. Therefore, directly solving \(A^{-1}b\) is not feasible. Instead, reconstruction is usually formulated as a least-squares problem:
+  </p>
+
+  \[
+  \min_x f(x)=
+  \frac{1}{2}\|Ax-b\|_2^2.
+  \]
+
+  <p>
+    The gradient of this objective is
+  </p>
+
+  \[
+  \nabla f(x)=
+  A^T(Ax-b).
+  \]
+
+  <p>
+    A basic gradient descent update would therefore be
+  </p>
+
+  \[
+  x^{(k+1)}
+  =
+  x^{(k)}
+  +
+  \lambda A^T(b-Ax^{(k)}),
+  \]
+
+  <p>
+    where \(b-Ax^{(k)}\) is the projection residual, and \(\lambda\) is the step size.
+  </p>
+
+  <p>
+    SIRT further introduces row and column normalization to balance the contribution of different rays and different voxels. Let \(R\) be a diagonal matrix containing row sums of \(A\), and \(C\) be a diagonal matrix containing column sums of \(A\):
+  </p>
+
+  \[
+  R_{ii}=\sum_j a_{ij},
+  \qquad
+  C_{jj}=\sum_i a_{ij}.
+  \]
+
+  <p>
+    With these normalization terms, the SIRT update becomes
+  </p>
+
+  \[
+  x^{(k+1)}
+  =
+  x^{(k)}
+  +
+  \lambda
+  C^{-1}A^TR^{-1}
+  \left(b-Ax^{(k)}\right).
+  \]
+
+  <p>
+    This update has an intuitive interpretation. First, the current estimate \(x^{(k)}\) is forward-projected to obtain \(Ax^{(k)}\). Then the difference between the measured projection and the predicted projection is computed. Finally, this residual is back-projected into the volume to update the tomogram. Repeating this process gradually reduces the projection error.
+  </p>
+
+  <p>
+    Compared with WBP, SIRT often produces smoother reconstructions and can suppress some streak artifacts. However, it is computationally more expensive because it requires many forward-projection and back-projection iterations.
+  </p>
+
+  <h4>Why Classical Reconstruction Is Not Enough</h4>
+
+  <p>
+    Although WBP and SIRT are fundamental methods in tomographic reconstruction, they cannot fully solve the challenges of Cryo-ET. The first major issue comes from data collection. Because the specimen can usually only be tilted within a limited angular range, such as approximately −60° to +60°, projection data from many directions are missing.
+  </p>
+
+  <p>
+    In Fourier space, this limited-angle acquisition creates a missing wedge: a wedge-shaped region of unsampled frequency information. Since this information was never measured, classical reconstruction algorithms cannot truly recover it from the data alone. As a result, reconstructed tomograms often contain anisotropic resolution, elongation artifacts, and missing structural details.
+  </p>
+
+  <p>
+    The second issue is noise. Cryo-ET must use low electron doses to avoid damaging biological samples, but low-dose imaging leads to low signal-to-noise ratio. During reconstruction, noise can be amplified or spread across the volume, making the final tomogram noisy and low-contrast.
+  </p>
+
+  <p>
+    WBP is fast and simple, but it is sensitive to missing angles and noise. SIRT is more robust and often gives smoother results, but it still cannot reconstruct information that is absent from the measured tilt series. Therefore, both methods are limited by the physical constraints of Cryo-ET data acquisition.
+  </p>
+
+  <p>
+    This is why more advanced reconstruction methods are needed. To better recover structural details, reduce artifacts, and support downstream biological analysis, recent methods have started to incorporate deep learning, self-supervision, denoising, and generative priors into Cryo-ET reconstruction.
+  </p>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/2_5.png' | relative_url }}" alt="Missing wedge artifacts in weighted back-projection shown in real space and Fourier space">
+    <figcaption>Figure 2.7. Limitation of classical weighted back-projection under limited-angle acquisition. The real-space reconstruction shows weak contrast and directional artifacts, while the Fourier-space view reveals the missing wedge where projection information was not sampled.</figcaption>
+  </figure>
+
   <h2>3. Classical Reconstruction Methods</h2>
 
   <h3>3.1 Weighted Back Projection</h3>
@@ -852,6 +1045,199 @@ permalink: /blogs/cryo-et/
   </figure>
 
   <h3>2.5 Tomogram 重建</h3>
+
+  <p>
+    在完成采样、数据收集、倾斜序列组装以及可选校正之后，Cryo-ET 的最终目标是从一系列二维投影图像中重建出三维 tomogram。这是整个工作流程中最核心的计算步骤：给定不同倾斜角度下的投影图像，我们希望恢复样本真实的三维结构。
+  </p>
+
+  <h4>加权反投影</h4>
+
+  <p>
+    断层重建的数学基础是中心切片定理。以二维情况为例，假设待重建物体为 \(f(x,y)\)，在角度 \(\theta\) 下的投影为 \(p_\theta(t)\)。这个投影可以理解为沿着与投影方向垂直的直线对物体进行积分：
+  </p>
+
+  \[
+  p_\theta(t)=
+  \int\int f(x,y)\,
+  \delta(t-x\cos\theta-y\sin\theta)\,dx\,dy.
+  \]
+
+  <p>
+    对该投影做一维傅里叶变换，可以得到
+  </p>
+
+  \[
+  P_\theta(k)=
+  \int p_\theta(t)e^{-i2\pi kt}\,dt.
+  \]
+
+  <p>
+    根据中心切片定理，这个结果恰好等于原物体二维傅里叶变换中经过原点的一条切片：
+  </p>
+
+  \[
+  P_\theta(k)=
+  F(k\cos\theta,k\sin\theta).
+  \]
+
+  <p>
+    换句话说，每一张投影图像都提供了傅里叶空间中的一条径向切片。如果能够从足够多的角度采集投影，就可以将这些傅里叶切片组合起来恢复原始物体。
+  </p>
+
+  <p>
+    最直接的想法是反投影。对于每个投影 \(p_\theta(t)\)，将它沿对应的投影方向“铺回”到空间中，并把所有角度的贡献相加：
+  </p>
+
+  \[
+  f_{\mathrm{BP}}(x,y)=
+  \int_0^\pi
+  p_\theta(x\cos\theta+y\sin\theta)
+  \,d\theta.
+  \]
+
+  <p>
+    然而，简单反投影会得到模糊的重建结果。原因在于傅里叶空间中的采样并不均匀。所有径向切片都会经过原点，因此原点附近的低频信息被重复采样多次，而远离原点的高频信息采样更加稀疏。这会导致低频成分被过度强调，使重建图像变得模糊。
+  </p>
+
+  <p>
+    加权反投影（Weighted Back Projection, WBP）通过在反投影之前加入频域滤波来校正这种采样不均衡。最常见的滤波器是 ramp filter，它会将每个投影的频谱乘上 \(|k|\)。这样可以抑制被过度采样的低频成分，并增强高频细节：
+  </p>
+
+  \[
+  \tilde{P}_\theta(k)=
+  |k|P_\theta(k).
+  \]
+
+  <p>
+    滤波之后，重建图像可以写作
+  </p>
+
+  \[
+  f(x,y)=
+  \int_0^\pi
+  \left[
+  \int_{-\infty}^{\infty}
+  P_\theta(k)|k|
+  e^{i2\pi k(x\cos\theta+y\sin\theta)}
+  \,dk
+  \right]
+  d\theta.
+  \]
+
+  <p>
+    这就是 WBP 的基本思想：先在傅里叶空间中对每张投影进行滤波，再将滤波后的投影按照对应角度反投影回实空间，并对所有角度进行累加。
+  </p>
+
+  <h4>同步迭代重建方法</h4>
+
+  <p>
+    另一类经典重建方法是同步迭代重建方法（Simultaneous Iterative Reconstruction Technique, SIRT）。与基于解析反演的 WBP 不同，SIRT 将 tomogram 重建写成一个线性逆问题。
+  </p>
+
+  <p>
+    离散化之后，未知的 tomogram 可以表示为向量 \(x\)，实际观测到的投影数据可以表示为向量 \(b\)。成像过程可以建模为
+  </p>
+
+  \[
+  Ax=b,
+  \]
+
+  <p>
+    其中，\(A\) 是系统投影矩阵。矩阵 \(A\) 的每一行描述一条投影射线如何穿过体数据中的 voxels，而元素 \(a_{ij}\) 表示第 \(j\) 个 voxel 对第 \(i\) 条射线测量值的贡献。
+  </p>
+
+  <p>
+    在实际中，\(A\) 通常非常大、稀疏且病态，并且方程数量与未知数数量往往并不完全相等。因此，直接求解 \(A^{-1}b\) 是不可行的。通常会将重建问题转化为最小二乘问题：
+  </p>
+
+  \[
+  \min_x f(x)=
+  \frac{1}{2}\|Ax-b\|_2^2.
+  \]
+
+  <p>
+    该目标函数的梯度为
+  </p>
+
+  \[
+  \nabla f(x)=
+  A^T(Ax-b).
+  \]
+
+  <p>
+    因此，最基本的梯度下降更新可以写成
+  </p>
+
+  \[
+  x^{(k+1)}
+  =
+  x^{(k)}
+  +
+  \lambda A^T(b-Ax^{(k)}),
+  \]
+
+  <p>
+    其中，\(b-Ax^{(k)}\) 表示当前重建结果与真实投影之间的残差，\(\lambda\) 是步长。
+  </p>
+
+  <p>
+    SIRT 进一步引入行归一化和列归一化，用来平衡不同射线和不同 voxel 的贡献。令 \(R\) 表示由 \(A\) 的行和组成的对角矩阵，\(C\) 表示由 \(A\) 的列和组成的对角矩阵：
+  </p>
+
+  \[
+  R_{ii}=\sum_j a_{ij},
+  \qquad
+  C_{jj}=\sum_i a_{ij}.
+  \]
+
+  <p>
+    加入这些归一化项之后，SIRT 的迭代更新可以写作
+  </p>
+
+  \[
+  x^{(k+1)}
+  =
+  x^{(k)}
+  +
+  \lambda
+  C^{-1}A^TR^{-1}
+  \left(b-Ax^{(k)}\right).
+  \]
+
+  <p>
+    这个更新式有一个直观解释。首先，将当前估计 \(x^{(k)}\) 进行前向投影，得到 \(Ax^{(k)}\)。然后，计算真实投影 \(b\) 与预测投影 \(Ax^{(k)}\) 之间的差值。最后，将这个残差反投影回体数据中，用来更新 tomogram。不断重复这一过程，就可以逐步减小投影误差。
+  </p>
+
+  <p>
+    与 WBP 相比，SIRT 通常能够得到更平滑的重建结果，并在一定程度上减少条纹状伪影。但它的计算代价更高，因为需要反复进行前向投影和反投影迭代。
+  </p>
+
+  <h4>为什么经典重建方法不够好</h4>
+
+  <p>
+    尽管 WBP 和 SIRT 是断层重建中的基础方法，但它们并不能完全解决 Cryo-ET 中的重建困难。第一个主要问题来自数据收集。由于样本通常只能在有限角度范围内倾斜，例如大约 −60° 到 +60°，许多方向上的投影数据无法被采集。
+  </p>
+
+  <p>
+    在傅里叶空间中，这种有限角度采集会形成 missing wedge，也就是一块楔形的未采样频率区域。由于这些信息从未被实际测量，经典重建算法无法仅凭数据本身真正恢复它们。因此，重建出的 tomogram 往往存在各向异性分辨率、拉伸伪影以及结构细节缺失等问题。
+  </p>
+
+  <p>
+    第二个问题是噪声。Cryo-ET 必须使用较低电子剂量，以避免破坏生物样本结构，但低剂量成像会导致信噪比较低。在重建过程中，噪声可能被放大或传播到整个体数据中，使最终 tomogram 呈现较强噪声和较低对比度。
+  </p>
+
+  <p>
+    WBP 快速且简单，但对角度缺失和噪声较为敏感。SIRT 更加稳健，通常能得到更平滑的结果，但它仍然无法恢复倾斜序列中本来就没有被采集到的信息。因此，这两类方法都受到 Cryo-ET 数据采集物理限制的约束。
+  </p>
+
+  <p>
+    这也是为什么需要更先进的重建方法。为了更好地恢复结构细节、减少伪影，并支持下游生物分析任务，近年来的重建方法开始将深度学习、自监督学习、去噪策略和生成式先验引入 Cryo-ET reconstruction。
+  </p>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/2_5.png' | relative_url }}" alt="加权反投影中的 missing wedge 伪影在实空间和傅里叶空间中的表现">
+    <figcaption>图 2.7. 有限角度采集下经典加权反投影的局限性。实空间重建表现出较弱对比度和方向性伪影，傅里叶空间中则可以看到未被采样的 missing wedge 区域。</figcaption>
+  </figure>
 
   <h2>3. 经典重建方法</h2>
 
