@@ -1188,28 +1188,59 @@ permalink: /blogs/cryo-et/
 
   <ul>
     <li>
-      Electron microscopy allows us to observe biological structures at much smaller scales than optical microscopy, while cryo-EM makes it possible to preserve hydrated biological samples in a near-native state.
+      <strong>Electron microscopy</strong> allows us to observe biological structures at much smaller scales than <strong>optical microscopy</strong>, while <strong>cryo-EM</strong> makes it possible to preserve hydrated biological samples in a <strong>near-native state</strong>.
     </li>
     <li>
-      Cryo-EM and Cryo-ET are two important routes in cryogenic electron microscopy. Compared with single-particle Cryo-EM, Cryo-ET is especially powerful because it can capture in situ structures and multi-scale spatial information.
+      <strong>Cryo-EM</strong> and <strong>Cryo-ET</strong> are two important routes in cryogenic electron microscopy. Compared with <strong>single-particle Cryo-EM</strong>, Cryo-ET is especially powerful because it can capture <strong>in situ structures</strong> and <strong>multi-scale spatial information</strong>.
     </li>
     <li>
-      A typical Cryo-ET workflow includes sampling, data collection, tilt series assembly, optional tilt series correction, and tomogram reconstruction.
+      A typical <strong>Cryo-ET workflow</strong> includes <strong>sampling</strong>, <strong>data collection</strong>, <strong>tilt series assembly</strong>, optional <strong>tilt series correction</strong>, and <strong>tomogram reconstruction</strong>.
     </li>
     <li>
-      Due to the limited tilt range during data collection, Cryo-ET reconstruction suffers from the missing wedge problem. Together with low-dose imaging noise, this makes reconstruction a challenging ill-posed inverse problem.
+      Due to the <strong>limited tilt range</strong> during data collection, Cryo-ET reconstruction suffers from the <strong>missing wedge</strong> problem. Together with <strong>low-dose imaging noise</strong>, this makes reconstruction a challenging <strong>ill-posed inverse problem</strong>.
     </li>
     <li>
-      Classical reconstruction methods such as WBP and SIRT provide the foundation for tomogram reconstruction, but they cannot fully recover missing information or remove artifacts caused by limited-angle acquisition.
+      Classical reconstruction methods such as <strong>WBP</strong> and <strong>SIRT</strong> provide the foundation for <strong>tomogram reconstruction</strong>, but they cannot fully recover <strong>missing information</strong> or remove artifacts caused by <strong>limited-angle acquisition</strong>.
     </li>
     <li>
-      Self-supervised deep learning methods, such as IsoNet and DeepDeWedge, improve Cryo-ET reconstruction by learning directly from tomograms. IsoNet focuses on iterative missing-wedge correction, while DeepDeWedge further combines missing-wedge reconstruction with denoising.
+      <strong>Self-supervised deep learning</strong> methods, such as <strong>IsoNet</strong> and <strong>DeepDeWedge</strong>, improve Cryo-ET reconstruction by learning directly from tomograms. IsoNet focuses on iterative <strong>missing-wedge correction</strong>, while DeepDeWedge further combines <strong>missing-wedge reconstruction</strong> with <strong>denoising</strong>.
     </li>
     <li>
-      CryoGEN formulates Cryo-ET reconstruction from a maximum a posteriori perspective. By introducing an energy-based prior and random noise, it addresses the one-to-many nature of the inverse problem and improves reconstruction efficiency, achieving around 10x faster training in reported experiments.
+      <strong>CryoGEN</strong> formulates Cryo-ET reconstruction from a <strong>maximum a posteriori</strong> perspective. By introducing an <strong>energy-based prior</strong> and <strong>random noise</strong>, it addresses the <strong>one-to-many</strong> nature of the inverse problem and improves reconstruction efficiency, achieving around <strong>10x faster training</strong> in reported experiments.
     </li>
     <li>
-      CryoGEN-II further unifies IsoNet and CryoGEN within a variational inference framework. It combines reconstruction consistency, generative prior matching, aggregated posterior matching, and latent-space SAM to obtain more stable and higher-quality reconstructions.
+      <strong>CryoGEN-II</strong> further unifies IsoNet and CryoGEN within a <strong>variational inference</strong> framework. It combines <strong>reconstruction consistency</strong>, <strong>generative prior matching</strong>, <strong>aggregated posterior matching</strong>, and <strong>latent-space SAM</strong> to obtain more stable and higher-quality reconstructions.
+    </li>
+  </ul>
+
+  <h2>5. References</h2>
+
+  <ul>
+    <li>
+      Cryo-ET Workflow: <a href="https://chanzuckerberg.github.io/cryoet-data-portal/stable/cryoet_workflow.html">https://chanzuckerberg.github.io/cryoet-data-portal/stable/cryoet_workflow.html</a>
+    </li>
+    <li>
+      Cryo-EM Tutorial: <a href="https://cryoem101.org/">https://cryoem101.org/</a>
+    </li>
+    <li>
+      IsoNet: <a href="https://www.nature.com/articles/s41467-022-33957-8">https://www.nature.com/articles/s41467-022-33957-8</a>
+    </li>
+    <li>
+      DeepDeWedge: <a href="https://www.nature.com/articles/s41467-024-51438-y">https://www.nature.com/articles/s41467-024-51438-y</a>
+    </li>
+  </ul>
+
+  <h2>6. Follow Our Work</h2>
+
+  <ul>
+    <li>
+      CryoGEN: <a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/29d319f7c1513c9ecd81d3a6e9632a6e-Paper-Conference.pdf">https://proceedings.iclr.cc/paper_files/paper/2025/file/29d319f7c1513c9ecd81d3a6e9632a6e-Paper-Conference.pdf</a>
+    </li>
+    <li>
+      CryoGEN-II: CVPR 2026 DEXTER Workshop, to be released.
+    </li>
+    <li>
+      OpenCryo Interactive Encyclopedia: <a href="https://opencryo-preview-7qk3a9.vercel.app/en/">https://opencryo-preview-7qk3a9.vercel.app/en/</a>
     </li>
   </ul>
 </article>
@@ -2398,28 +2429,59 @@ permalink: /blogs/cryo-et/
 
   <ul>
     <li>
-      电子显微镜能够捕捉更微观尺度的生物结构，而冷冻电镜使得在接近天然状态下观察真实含水生物样本成为可能。
+      <strong>电子显微镜</strong>能够捕捉更微观尺度的生物结构，而<strong>冷冻电镜</strong>使得在<strong>接近天然状态</strong>下观察真实含水生物样本成为可能。
     </li>
     <li>
-      Cryo-EM 和 Cryo-ET 是冷冻电镜中的两条重要路线。相比单颗粒 Cryo-EM，Cryo-ET 的优势在于能够捕捉原位结构和多尺度空间信息。
+      <strong>Cryo-EM</strong> 和 <strong>Cryo-ET</strong> 是冷冻电镜中的两条重要路线。相比<strong>单颗粒 Cryo-EM</strong>，Cryo-ET 的优势在于能够捕捉<strong>原位结构</strong>和<strong>多尺度空间信息</strong>。
     </li>
     <li>
-      一个典型的 Cryo-ET 工作流程包括：采样、数据收集、倾斜序列组装、可选的倾斜序列校正，以及 tomogram 重建。
+      一个典型的 <strong>Cryo-ET 工作流程</strong>包括：<strong>采样</strong>、<strong>数据收集</strong>、<strong>倾斜序列组装</strong>、可选的<strong>倾斜序列校正</strong>，以及 <strong>tomogram 重建</strong>。
     </li>
     <li>
-      由于数据收集时样本倾斜角度受限，Cryo-ET 重建会产生 missing wedge 问题；再加上低剂量成像带来的噪声，使得重建成为一个具有挑战性的病态逆问题。
+      由于数据收集时样本<strong>倾斜角度受限</strong>，Cryo-ET 重建会产生 <strong>missing wedge</strong> 问题；再加上<strong>低剂量成像</strong>带来的噪声，使得重建成为一个具有挑战性的<strong>病态逆问题</strong>。
     </li>
     <li>
-      WBP 和 SIRT 等经典重建方法为 tomogram reconstruction 提供了基础，但它们无法完全恢复有限角度采集导致的缺失信息，也难以彻底去除相关伪影。
+      <strong>WBP</strong> 和 <strong>SIRT</strong> 等经典重建方法为 <strong>tomogram reconstruction</strong> 提供了基础，但它们无法完全恢复有限角度采集导致的<strong>缺失信息</strong>，也难以彻底去除相关<strong>伪影</strong>。
     </li>
     <li>
-      IsoNet 和 DeepDeWedge 等自监督深度学习方法通过直接从 tomogram 中学习来提升 Cryo-ET 重建质量。IsoNet 侧重于迭代式 missing wedge correction，而 DeepDeWedge 进一步将 missing wedge reconstruction 与 denoising 结合起来。
+      <strong>IsoNet</strong> 和 <strong>DeepDeWedge</strong> 等<strong>自监督深度学习方法</strong>通过直接从 tomogram 中学习来提升 Cryo-ET 重建质量。IsoNet 侧重于迭代式 <strong>missing wedge correction</strong>，而 DeepDeWedge 进一步将 <strong>missing wedge reconstruction</strong> 与 <strong>denoising</strong> 结合起来。
     </li>
     <li>
-      CryoGEN 从最大后验估计的角度建模 Cryo-ET reconstruction。通过引入 energy-based prior 和随机噪声，它缓解了一对多逆问题带来的平均化问题，并提高了重建效率，在论文实验中实现了约 10 倍训练加速。
+      <strong>CryoGEN</strong> 从<strong>最大后验估计</strong>的角度建模 Cryo-ET reconstruction。通过引入 <strong>energy-based prior</strong> 和<strong>随机噪声</strong>，它缓解了一对多逆问题带来的平均化问题，并提高了重建效率，在论文实验中实现了约 <strong>10 倍训练加速</strong>。
     </li>
     <li>
-      CryoGEN-II 进一步在变分推断框架下统一 IsoNet 和 CryoGEN。它结合 reconstruction consistency、generative prior matching、aggregated posterior matching 和 latent-space SAM，从而获得更加稳定且质量更高的重建结果。
+      <strong>CryoGEN-II</strong> 进一步在<strong>变分推断框架</strong>下统一 IsoNet 和 CryoGEN。它结合 <strong>reconstruction consistency</strong>、<strong>generative prior matching</strong>、<strong>aggregated posterior matching</strong> 和 <strong>latent-space SAM</strong>，从而获得更加稳定且质量更高的重建结果。
+    </li>
+  </ul>
+
+  <h2>5. 参考资料</h2>
+
+  <ul>
+    <li>
+      Cryo-ET Workflow: <a href="https://chanzuckerberg.github.io/cryoet-data-portal/stable/cryoet_workflow.html">https://chanzuckerberg.github.io/cryoet-data-portal/stable/cryoet_workflow.html</a>
+    </li>
+    <li>
+      Cryo-EM Tutorial: <a href="https://cryoem101.org/">https://cryoem101.org/</a>
+    </li>
+    <li>
+      IsoNet: <a href="https://www.nature.com/articles/s41467-022-33957-8">https://www.nature.com/articles/s41467-022-33957-8</a>
+    </li>
+    <li>
+      DeepDeWedge: <a href="https://www.nature.com/articles/s41467-024-51438-y">https://www.nature.com/articles/s41467-024-51438-y</a>
+    </li>
+  </ul>
+
+  <h2>6. 关注我们团队的工作</h2>
+
+  <ul>
+    <li>
+      CryoGEN: <a href="https://proceedings.iclr.cc/paper_files/paper/2025/file/29d319f7c1513c9ecd81d3a6e9632a6e-Paper-Conference.pdf">https://proceedings.iclr.cc/paper_files/paper/2025/file/29d319f7c1513c9ecd81d3a6e9632a6e-Paper-Conference.pdf</a>
+    </li>
+    <li>
+      CryoGEN-II: CVPR 2026 DEXTER Workshop, to be released.
+    </li>
+    <li>
+      OpenCryo Interactive Encyclopedia: <a href="https://opencryo-preview-7qk3a9.vercel.app/en/">https://opencryo-preview-7qk3a9.vercel.app/en/</a>
     </li>
   </ul>
 </article>
