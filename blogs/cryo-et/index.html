@@ -707,6 +707,61 @@ permalink: /blogs/cryo-et/
 
   <h3>3.2 DeepDeWedge</h3>
 
+  <p>
+    DeepDeWedge is another self-supervised deep learning method for Cryo-ET reconstruction. Compared with IsoNet, its main focus is not only missing-wedge compensation, but also simultaneous denoising. In other words, DeepDeWedge aims to recover missing structural information while producing a cleaner and higher-contrast tomogram.
+  </p>
+
+  <p>
+    The key idea comes from the Noise2Noise principle: if two observations contain the same underlying signal but independent noise, a neural network can be trained to map one noisy observation to the other without requiring a clean ground truth. In Cryo-ET, DeepDeWedge obtains such paired observations by splitting the original tilt series into two sub-tilt-series, such as even and odd tilts.
+  </p>
+
+  <p>
+    The workflow can be summarized as follows:
+  </p>
+
+  <ul>
+    <li>
+      The original tilt series is split into two sub-tilt-series, denoted as \(t^0\) and \(t^1\). Each sub-tilt-series is reconstructed separately with filtered back projection, producing two noisy tomograms that share the same biological structure but contain different noise patterns.
+    </li>
+    <li>
+      Paired subtomograms \((v_i^0, v_i^1)\) are extracted from the two reconstructions. These pairs provide the self-supervised training signal: one half-reconstruction can be used as the input, while the other half-reconstruction serves as the target.
+    </li>
+    <li>
+      During model fitting, DeepDeWedge applies rotations and Fourier masks to the paired subtomograms. This allows the network to learn both how to suppress noise and how to fill in missing-wedge regions. A simplified training objective can be written as
+    </li>
+  </ul>
+
+  \[
+  \min_\theta \sum_i
+  \left\|
+  f_\theta(\tilde{v}_i^0)-\tilde{v}_i^1
+  \right\|_2^2,
+  \]
+
+  <p>
+    where \(\tilde{v}_i^0\) and \(\tilde{v}_i^1\) denote the transformed input-target pair, and \(f_\theta\) is the neural network.
+  </p>
+
+  <ul>
+    <li>
+      After training converges, the fitted model is applied back to the subtomograms and the refined subtomograms are reassembled into tomograms. The two refined half-reconstructions are then averaged to obtain the final reconstruction.
+    </li>
+  </ul>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/3_2_1.png' | relative_url }}" alt="DeepDeWedge pipeline for splitting tilt series model fitting and tomogram refinement">
+    <figcaption>Figure 3.4. DeepDeWedge pipeline. The original tilt series is split into two sub-tilt-series, reconstructed into paired half-tomograms, used to train a self-supervised model with rotations and Fourier masks, and finally refined and averaged into a denoised missing-wedge-corrected reconstruction.</figcaption>
+  </figure>
+
+  <p>
+    The advantage of DeepDeWedge is that it combines two previously separated goals: denoising and missing-wedge reconstruction. Compared with using a denoiser and a missing-wedge correction method as two separate steps, DeepDeWedge provides a unified self-supervised framework and often produces cleaner tomograms with stronger overall contrast.
+  </p>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/3_2_2.png' | relative_url }}" alt="Comparison of FBP Wiener filtering IsoNet CryoCARE plus IsoNet and DeepDeWedge reconstruction results">
+    <figcaption>Figure 3.5. Reconstruction comparison across denoising and missing-wedge correction strategies. DeepDeWedge produces a cleaner tomogram with stronger contrast and more continuous structural features compared with FBP with Wiener filtering, IsoNet alone, and a sequential CryoCARE plus IsoNet workflow.</figcaption>
+  </figure>
+
   <h3>3.3 CryoGEN</h3>
 
   <h3>3.4 CryoGEN-II</h3>
@@ -1416,6 +1471,61 @@ permalink: /blogs/cryo-et/
   </figure>
 
   <h3>3.2 DeepDeWedge</h3>
+
+  <p>
+    DeepDeWedge 是另一种用于 Cryo-ET 重建的自监督深度学习方法。与 IsoNet 相比，它的重点不仅是补偿 missing wedge，还希望同时完成去噪。换句话说，DeepDeWedge 的目标是在恢复缺失结构信息的同时，得到更干净、对比度更高的 tomogram。
+  </p>
+
+  <p>
+    它的核心思想来自 Noise2Noise：如果两份观测包含相同的真实信号，但噪声相互独立，那么神经网络可以在没有干净 ground truth 的情况下，学习从一个带噪观测映射到另一个带噪观测。在 Cryo-ET 中，DeepDeWedge 通过将原始 tilt series 拆分成两个子倾斜序列来构造这种配对数据，例如 even/odd split。
+  </p>
+
+  <p>
+    整体流程可以概括为：
+  </p>
+
+  <ul>
+    <li>
+      原始 tilt series 首先被拆分为两个子倾斜序列，记为 \(t^0\) 和 \(t^1\)。随后分别对这两个子序列进行 filtered back projection，得到两个带噪 tomogram。它们包含相同的生物结构，但噪声模式不同。
+    </li>
+    <li>
+      从这两个重建结果中提取配对的 subtomograms \((v_i^0, v_i^1)\)。这些配对数据提供了自监督训练信号：其中一个 half-reconstruction 可以作为输入，另一个 half-reconstruction 作为目标。
+    </li>
+    <li>
+      在模型训练过程中，DeepDeWedge 会对配对 subtomograms 施加旋转和傅里叶空间 mask。这样，网络可以同时学习如何抑制噪声，以及如何补全 missing wedge 区域。一个简化的训练目标可以写作：
+    </li>
+  </ul>
+
+  \[
+  \min_\theta \sum_i
+  \left\|
+  f_\theta(\tilde{v}_i^0)-\tilde{v}_i^1
+  \right\|_2^2,
+  \]
+
+  <p>
+    其中，\(\tilde{v}_i^0\) 和 \(\tilde{v}_i^1\) 表示经过旋转和 mask 处理后的输入-目标样本对，\(f_\theta\) 表示神经网络。
+  </p>
+
+  <ul>
+    <li>
+      训练收敛后，训练好的模型会被用于 refine subtomograms，并将这些 subtomograms 重新组装成 tomograms。最后，将两个 refined half-reconstructions 进行平均，得到最终重建结果。
+    </li>
+  </ul>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/3_2_1.png' | relative_url }}" alt="DeepDeWedge 的 tilt series 拆分、模型训练和 tomogram refinement 流程">
+    <figcaption>图 3.4. DeepDeWedge 流程。原始 tilt series 被拆分为两个子倾斜序列，并分别重建为配对 half-tomograms；随后通过旋转和傅里叶 mask 构造自监督训练任务，最终将 refinement 后的两个 half-reconstructions 平均得到去噪和 missing-wedge 校正后的结果。</figcaption>
+  </figure>
+
+  <p>
+    DeepDeWedge 的优势在于，它将两个原本相对分离的目标结合在一起：去噪和 missing wedge 重建。相比于先使用 denoiser 再使用 missing wedge correction 方法的两步流程，DeepDeWedge 提供了一个统一的自监督框架，通常能够得到更干净、整体对比度更强的 tomogram。
+  </p>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/3_2_2.png' | relative_url }}" alt="FBP Wiener filter、IsoNet、CryoCARE 加 IsoNet 和 DeepDeWedge 重建结果对比">
+    <figcaption>图 3.5. 不同去噪与 missing-wedge 校正策略的重建结果对比。与 FBP 加 Wiener filter、单独 IsoNet 以及 CryoCARE 加 IsoNet 的串联流程相比，DeepDeWedge 生成的 tomogram 更干净、整体对比度更强，并呈现出更连续的结构细节。</figcaption>
+  </figure>
 
   <h3>3.3 CryoGEN</h3>
 
