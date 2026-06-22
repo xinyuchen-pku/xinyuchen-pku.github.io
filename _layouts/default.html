@@ -46,6 +46,12 @@
       margin-top: 0;
     }
 
+    .main-content h2,
+    .main-content h3,
+    .main-content h4 {
+      scroll-margin-top: 5rem;
+    }
+
     .blog-list {
       padding-left: 1.2rem;
       font-size: 1.1rem;
@@ -74,6 +80,64 @@
     [data-lang] {
       display: none;
     }
+
+    .floating-toc {
+      position: fixed;
+      top: 5.5rem;
+      right: 1rem;
+      width: 15rem;
+      max-height: calc(100vh - 7rem);
+      padding: 1rem;
+      overflow: auto;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid #dce6f0;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      font-size: 0.9rem;
+      z-index: 10;
+    }
+
+    .floating-toc-title {
+      margin: 0 0 0.6rem;
+      color: #155799;
+      font-weight: 700;
+    }
+
+    .floating-toc ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .floating-toc li {
+      margin: 0.35rem 0;
+      line-height: 1.35;
+    }
+
+    .floating-toc a {
+      color: #606c71;
+      text-decoration: none;
+    }
+
+    .floating-toc a:hover {
+      color: #159957;
+      text-decoration: underline;
+    }
+
+    .floating-toc .toc-h3 {
+      padding-left: 0.8rem;
+    }
+
+    .floating-toc .toc-h4 {
+      padding-left: 1.6rem;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 1200px) {
+      .floating-toc {
+        display: none;
+      }
+    }
   </style>
   <script>
     window.MathJax = {
@@ -98,9 +162,50 @@
     {{ content }}
   </main>
 
+  <aside class="floating-toc" aria-label="Table of contents">
+    <p class="floating-toc-title" data-en="Contents" data-zh="目录">Contents</p>
+    <ul id="floating-toc-list"></ul>
+  </aside>
+
   <script>
     const toggle = document.getElementById("language-toggle");
+    const tocList = document.getElementById("floating-toc-list");
     let currentLanguage = "en";
+
+    function slugify(text, index) {
+      return `section-${currentLanguage}-${index}-${text
+        .trim()
+        .toLowerCase()
+        .replace(/[^\p{L}\p{N}]+/gu, "-")
+        .replace(/^-+|-+$/g, "")}`;
+    }
+
+    function rebuildToc() {
+      if (!tocList) {
+        return;
+      }
+
+      tocList.innerHTML = "";
+      const activeArticle = document.querySelector(`[data-lang="${currentLanguage}"]`);
+      const scope = activeArticle || document.querySelector(".main-content");
+      const headings = Array.from(scope.querySelectorAll("h2, h3, h4"));
+
+      headings.forEach((heading, index) => {
+        if (!heading.id) {
+          heading.id = slugify(heading.textContent, index);
+        }
+
+        const item = document.createElement("li");
+        item.className = `toc-${heading.tagName.toLowerCase()}`;
+
+        const link = document.createElement("a");
+        link.href = `#${heading.id}`;
+        link.textContent = heading.textContent;
+
+        item.appendChild(link);
+        tocList.appendChild(item);
+      });
+    }
 
     function setLanguage(language) {
       currentLanguage = language;
@@ -114,6 +219,8 @@
       document.querySelectorAll("[data-lang]").forEach((element) => {
         element.style.display = element.dataset.lang === currentLanguage ? "block" : "none";
       });
+
+      rebuildToc();
     }
 
     setLanguage(currentLanguage);
