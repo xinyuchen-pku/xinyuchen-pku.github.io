@@ -611,25 +611,107 @@ permalink: /blogs/cryo-et/
     <figcaption>Figure 2.7. Limitation of classical weighted back-projection under limited-angle acquisition. The real-space reconstruction shows weak contrast and directional artifacts, while the Fourier-space view reveals the missing wedge where projection information was not sampled.</figcaption>
   </figure>
 
-  <h2>3. Classical Reconstruction Methods</h2>
+  <h2>3. Advanced Reconstruction Methods</h2>
 
-  <h3>3.1 Weighted Back Projection</h3>
+  <h3>3.1 IsoNet</h3>
 
-  <h3>3.2 SIRT</h3>
+  <p>
+    IsoNet is a self-supervised deep learning method designed to reduce missing-wedge artifacts and improve the isotropy of Cryo-ET tomograms. Instead of requiring clean ground truth or subtomogram averaging, IsoNet learns structural information directly from the raw tomograms themselves.
+  </p>
 
-  <h3>3.3 Limitations: Missing Wedge and Noise</h3>
+  <p>
+    The workflow of IsoNet contains five steps: optional CTF deconvolution, optional mask generation, subtomogram extraction, iterative training, and prediction. The optional CTF deconvolution step enhances contrast, while mask generation excludes empty regions such as ice, carbon, or vacuum. Then, subtomograms are extracted from informative regions and used for self-supervised training.
+  </p>
 
-  <h2>4. Advanced Reconstruction Methods</h2>
+  <figure>
+    <img src="{{ '/blogs/cryo-et/3_1_1.png' | relative_url }}" alt="IsoNet workflow for CTF deconvolution mask generation subtomogram extraction training and prediction">
+    <figcaption>Figure 3.1. IsoNet workflow. The method starts from original tomograms, optionally performs CTF deconvolution and mask generation, extracts informative subtomograms, and then uses self-supervised iterative training and prediction to produce corrected tomograms.</figcaption>
+  </figure>
 
-  <h3>4.1 IsoNet</h3>
+  <p>
+    The key idea of IsoNet is to create training pairs from the tomogram itself. For an extracted subtomogram \(x\), IsoNet first rotates it into a new orientation:
+  </p>
 
-  <h3>4.2 DeepDeWedge</h3>
+  \[
+  x_r = R_r x,
+  \]
 
-  <h3>4.3 CryoGEN</h3>
+  <p>
+    where \(R_r\) denotes a 3D rotation operator.
+  </p>
 
-  <h3>4.4 CryoGEN-II</h3>
+  <p>
+    Then, an additional artificial missing wedge mask \(M_a\) is applied in Fourier space to generate a degraded input:
+  </p>
 
-  <h2>5. Takeaway Messages</h2>
+  \[
+  \tilde{x}_r =
+  \mathcal{F}^{-1}
+  \left[
+  M_a \cdot \mathcal{F}(x_r)
+  \right],
+  \]
+
+  <p>
+    where \(\mathcal{F}\) and \(\mathcal{F}^{-1}\) denote Fourier transform and inverse Fourier transform. The degraded subtomogram \(\tilde{x}_r\) is used as the input, while the rotated subtomogram \(x_r\) is used as the target.
+  </p>
+
+  <p>
+    The neural network \(f_\theta\) is trained to recover the artificially removed information by minimizing a reconstruction loss:
+  </p>
+
+  \[
+  \mathcal{L}_{\text{IsoNet}}(\theta)
+  =
+  \mathbb{E}_{x,r}
+  \left[
+  \left\|
+  f_\theta(\tilde{x}_r)-x_r
+  \right\|_2^2
+  \right].
+  \]
+
+  <p>
+    In this way, IsoNet learns a mapping from a more incomplete subtomogram to a less incomplete one, without requiring an external clean ground truth.
+  </p>
+
+  <p>
+    This training process is performed iteratively. After each iteration, the trained network predicts corrected subtomograms. Importantly, IsoNet does not overwrite the originally observed Fourier information. Instead, it only adds the newly predicted information into the original missing-wedge region. If \(M_o\) denotes the original observed Fourier region, the update can be written conceptually as
+  </p>
+
+  \[
+  \mathcal{F}(x^{(t+1)})
+  =
+  M_o \cdot \mathcal{F}(x^{(0)})
+  +
+  (1-M_o)\cdot \mathcal{F}(\hat{x}^{(t)}),
+  \]
+
+  <p>
+    where \(x^{(0)}\) is the original subtomogram and \(\hat{x}^{(t)}\) is the network prediction at iteration \(t\).
+  </p>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/3_1_2.png' | relative_url }}" alt="IsoNet iterative refinement of subtomogram structures across training iterations">
+    <figcaption>Figure 3.2. Iterative refinement in IsoNet. Across multiple iterations, the predicted structures become progressively more complete and isotropic as missing-wedge information is estimated and inserted into previously unsampled Fourier regions.</figcaption>
+  </figure>
+
+  <p>
+    Through this recursive refinement, missing-wedge artifacts are gradually reduced and the reconstruction becomes more isotropic. In practice, IsoNet can reduce artifacts, improve contrast, and make important structures easier to interpret. For example, structures that appear elongated, smeared, or incomplete in the original tomogram may become more complete and clearer after IsoNet processing.
+  </p>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/3_1_3.png' | relative_url }}" alt="Comparison between original Cryo-ET tomogram and IsoNet-corrected tomogram">
+    <figcaption>Figure 3.3. Example result of IsoNet correction. Compared with the original tomogram, the IsoNet-processed result shows clearer densities, reduced missing-wedge artifacts, and improved visibility of cellular structures across orthogonal views.</figcaption>
+  </figure>
+
+  <h3>3.2 DeepDeWedge</h3>
+
+  <h3>3.3 CryoGEN</h3>
+
+  <h3>3.4 CryoGEN-II</h3>
+
+  <h2>4. Takeaway Messages</h2>
 </article>
 
 <article data-lang="zh">
@@ -1239,23 +1321,105 @@ permalink: /blogs/cryo-et/
     <figcaption>图 2.7. 有限角度采集下经典加权反投影的局限性。实空间重建表现出较弱对比度和方向性伪影，傅里叶空间中则可以看到未被采样的 missing wedge 区域。</figcaption>
   </figure>
 
-  <h2>3. 经典重建方法</h2>
+  <h2>3. 先进重建方法</h2>
 
-  <h3>3.1 Weighted Back Projection</h3>
+  <h3>3.1 IsoNet</h3>
 
-  <h3>3.2 SIRT</h3>
+  <p>
+    IsoNet 是一种基于自监督学习的深度学习方法，主要用于减轻 missing wedge 伪影，并提升 Cryo-ET tomogram 的各向同性分辨率。它不需要干净的 ground truth，也不依赖 subtomogram averaging，而是直接从原始 tomogram 中学习结构信息。
+  </p>
 
-  <h3>3.3 局限性：Missing Wedge 与噪声</h3>
+  <p>
+    IsoNet 的流程主要包括五步：可选的 CTF 反卷积、可选的 mask 生成、subtomogram 提取、迭代训练，以及预测。CTF 反卷积可以增强图像对比度，mask 生成则用于排除冰、碳膜或真空等空白区域。随后，算法会从包含有效结构信息的区域中提取 subtomograms，用于后续自监督训练。
+  </p>
 
-  <h2>4. 先进重建方法</h2>
+  <figure>
+    <img src="{{ '/blogs/cryo-et/3_1_1.png' | relative_url }}" alt="IsoNet 的 CTF 反卷积、mask 生成、subtomogram 提取、训练和预测流程">
+    <figcaption>图 3.1. IsoNet 工作流程。该方法从原始 tomogram 出发，可选地进行 CTF 反卷积和 mask 生成，随后提取包含有效信息的 subtomograms，并通过自监督迭代训练与预测生成校正后的 tomogram。</figcaption>
+  </figure>
 
-  <h3>4.1 IsoNet</h3>
+  <p>
+    IsoNet 的核心思想是从 tomogram 自身构造训练样本对。对于一个提取出的 subtomogram \(x\)，IsoNet 首先将其旋转到新的方向：
+  </p>
 
-  <h3>4.2 DeepDeWedge</h3>
+  \[
+  x_r = R_r x,
+  \]
 
-  <h3>4.3 CryoGEN</h3>
+  <p>
+    其中，\(R_r\) 表示三维旋转算子。
+  </p>
 
-  <h3>4.4 CryoGEN-II</h3>
+  <p>
+    随后，算法会在傅里叶空间中施加一个额外的人造 missing wedge mask \(M_a\)，生成退化后的输入：
+  </p>
 
-  <h2>5. 总结</h2>
+  \[
+  \tilde{x}_r =
+  \mathcal{F}^{-1}
+  \left[
+  M_a \cdot \mathcal{F}(x_r)
+  \right],
+  \]
+
+  <p>
+    其中，\(\mathcal{F}\) 和 \(\mathcal{F}^{-1}\) 分别表示傅里叶变换和傅里叶逆变换。退化后的 subtomogram \(\tilde{x}_r\) 作为输入，而旋转后的 subtomogram \(x_r\) 作为目标。
+  </p>
+
+  <p>
+    神经网络 \(f_\theta\) 通过最小化重建损失来学习恢复被人为去除的信息：
+  </p>
+
+  \[
+  \mathcal{L}_{\text{IsoNet}}(\theta)
+  =
+  \mathbb{E}_{x,r}
+  \left[
+  \left\|
+  f_\theta(\tilde{x}_r)-x_r
+  \right\|_2^2
+  \right].
+  \]
+
+  <p>
+    通过这种方式，IsoNet 学习的是从“信息更缺失”的 subtomogram 到“信息相对更完整”的 subtomogram 的映射，而不需要外部干净标签。
+  </p>
+
+  <p>
+    这个训练过程是迭代进行的。每一轮迭代后，训练好的网络会预测经过校正的 subtomograms。需要注意的是，IsoNet 不会覆盖原本已经观测到的傅里叶信息，而是只将新预测出的信息补充到原始 missing wedge 区域中。如果 \(M_o\) 表示原始已观测到的傅里叶区域，那么更新过程可以概念性地写作：
+  </p>
+
+  \[
+  \mathcal{F}(x^{(t+1)})
+  =
+  M_o \cdot \mathcal{F}(x^{(0)})
+  +
+  (1-M_o)\cdot \mathcal{F}(\hat{x}^{(t)}),
+  \]
+
+  <p>
+    其中，\(x^{(0)}\) 是原始 subtomogram，\(\hat{x}^{(t)}\) 是第 \(t\) 轮迭代中网络预测得到的结果。
+  </p>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/3_1_2.png' | relative_url }}" alt="IsoNet 在多轮迭代中逐步 refinement subtomogram 结构">
+    <figcaption>图 3.2. IsoNet 的迭代 refinement 过程。随着迭代进行，预测结构逐渐变得更完整、更各向同性，模型估计出的 missing-wedge 信息被逐步补入原本未采样的傅里叶区域。</figcaption>
+  </figure>
+
+  <p>
+    通过这种递归式 refinement，missing wedge 伪影会逐渐减弱，重建结果也会变得更加各向同性。在实际效果上，IsoNet 可以减轻伪影、提高对比度，并使关键结构更容易被观察和解释。例如，在原始 tomogram 中被拉伸、模糊或不完整的结构，经过 IsoNet 处理后可能变得更加完整和清晰。
+  </p>
+
+  <figure>
+    <img src="{{ '/blogs/cryo-et/3_1_3.png' | relative_url }}" alt="原始 Cryo-ET tomogram 与 IsoNet 校正后 tomogram 的结果对比">
+    <figcaption>图 3.3. IsoNet 校正效果示例。与原始 tomogram 相比，IsoNet 处理后的结果显示出更清晰的密度、更少的 missing-wedge 伪影，并在正交视图中提升了细胞结构的可见性。</figcaption>
+  </figure>
+
+  <h3>3.2 DeepDeWedge</h3>
+
+  <h3>3.3 CryoGEN</h3>
+
+  <h3>3.4 CryoGEN-II</h3>
+
+  <h2>4. 总结</h2>
 </article>
