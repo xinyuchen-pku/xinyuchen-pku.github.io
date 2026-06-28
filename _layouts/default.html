@@ -185,6 +185,141 @@
         display: none;
       }
     }
+
+    .resume {
+      color: #2b2b2b;
+    }
+
+    .resume-header {
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .resume-header h1 {
+      margin-bottom: 0.4rem;
+    }
+
+    .resume-contact {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.4rem 0.75rem;
+      color: #606c71;
+    }
+
+    .resume-actions {
+      margin-top: 1rem;
+    }
+
+    .print-button {
+      padding: 0.55rem 0.9rem;
+      color: #fff;
+      cursor: pointer;
+      background: #155799;
+      border: 0;
+      border-radius: 5px;
+    }
+
+    .resume-section {
+      margin-top: 1.8rem;
+    }
+
+    .resume-section h2 {
+      padding-bottom: 0.25rem;
+      margin-bottom: 0.9rem;
+      border-bottom: 1px solid #dce6f0;
+    }
+
+    .resume-entry {
+      margin: 1rem 0;
+    }
+
+    .resume-entry-header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 1rem;
+      align-items: baseline;
+    }
+
+    .resume-entry-title {
+      font-weight: 700;
+    }
+
+    .resume-entry-meta {
+      color: #606c71;
+      font-size: 0.95rem;
+      white-space: nowrap;
+    }
+
+    .resume ul {
+      margin-top: 0.45rem;
+    }
+
+    .resume-compact-list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.5rem 1rem;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    @media (max-width: 720px) {
+      .resume-entry-header,
+      .resume-compact-list {
+        grid-template-columns: 1fr;
+      }
+
+      .resume-entry-meta {
+        white-space: normal;
+      }
+    }
+
+    @media print {
+      @page {
+        margin: 1.4cm;
+      }
+
+      body {
+        color: #111;
+        background: #fff;
+      }
+
+      .site-nav,
+      .floating-toc,
+      .resume-actions {
+        display: none !important;
+      }
+
+      .main-content {
+        max-width: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .resume {
+        font-size: 10pt;
+        line-height: 1.35;
+      }
+
+      .resume-header {
+        margin-bottom: 1rem;
+      }
+
+      .resume-section {
+        break-inside: avoid;
+        margin-top: 1rem;
+      }
+
+      .resume-entry {
+        break-inside: avoid;
+        margin: 0.65rem 0;
+      }
+
+      a {
+        color: #111;
+        text-decoration: none;
+      }
+    }
   </style>
   <script>
     window.MathJax = {
@@ -274,6 +409,12 @@
 
     toggle.addEventListener("click", () => {
       setLanguage(currentLanguage === "en" ? "zh" : "en");
+    });
+
+    document.querySelectorAll("[data-print-resume]").forEach((button) => {
+      button.addEventListener("click", () => {
+        window.print();
+      });
     });
   </script>
 </body>
