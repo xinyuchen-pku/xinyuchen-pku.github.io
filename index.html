@@ -5,14 +5,19 @@ title: Home
 
 <article class="resume" data-lang="en">
   <header class="resume-header">
-    <h1>Xinyu Chen's GitHub Homepage</h1>
-    <div class="resume-contact">
-      <span>Beijing, China</span>
-      <span>chenxinyu20040529@gmail.com</span>
-      <span>+86 18911827529</span>
+    <div class="resume-header-main">
+      <div class="resume-header-text">
+        <h1>Xinyu Chen</h1>
+        <div class="resume-contact">
+          <span>Beijing, China</span>
+          <span>chenxinyu20040529@gmail.com</span>
+          <span>+86 18911827529</span>
+        </div>
+      </div>
+      <img class="resume-photo" src="{{ '/photo.jpg' | relative_url }}" alt="Portrait of Xinyu Chen">
     </div>
     <div class="resume-actions">
-      <button class="print-button" type="button" data-print-resume>Export Resume PDF</button>
+      <a class="print-button" href="{{ '/assets/Xinyu_Chen_Resume_EN_v2.pdf' | relative_url }}" download>Download Resume PDF</a>
     </div>
   </header>
 
@@ -21,13 +26,22 @@ title: Home
     <div class="resume-entry">
       <div class="resume-entry-header">
         <div class="resume-entry-title">Peking University, Tong Class, Yuanpei College</div>
-        <div class="resume-entry-meta">Sept 2022 - Present</div>
+        <div class="resume-entry-meta">Sept 2022 - Jul 2026</div>
       </div>
       <ul>
         <li><strong>Major:</strong> Artificial Intelligence</li>
-        <li><strong>GPA:</strong> 3.667/4.0 | 86.7/100</li>
-        <li><strong>Core Courses:</strong> Machine Learning, Mathematical Foundation for AI, Multi-agent System, Introduction to Computer Vision, AI Systems Practice I/II, Cognition and Reasoning, Deep Learning and NLP</li>
-        <li>Member of <a href="https://pair-lab.com/">PAIR-Lab</a> and intern at <a href="https://www.bigai.ai/">BIGAI</a></li>
+        <li><strong>GPA:</strong> 3.565/4.0 | 85/100 (first three years: 3.667/4.0 | 86.7/100)</li>
+        <li><strong>Core Courses:</strong> Machine Learning (91), Mathematical Foundation for AI (90), Multi-agent System (94), Introduction to Computer Vision (93), AI Systems Practice I (96), AI Systems Practice II (97), Cognition and Reasoning (90.5), Deep Learning and Natural Language Processing (93)</li>
+        <li>Member of <a href="https://pair-lab.com/">PAIR-Lab</a> and intern at <a href="https://www.baai.ac.cn/">BAAI</a></li>
+      </ul>
+    </div>
+    <div class="resume-entry">
+      <div class="resume-entry-header">
+        <div class="resume-entry-title">Peking University, School of Computer Science, Ph.D. Student</div>
+        <div class="resume-entry-meta">Sept 2026 - Present</div>
+      </div>
+      <ul>
+        <li><strong>Advisor:</strong> Tengjiao Wang</li>
       </ul>
     </div>
   </section>
@@ -65,7 +79,7 @@ title: Home
     <div class="resume-entry">
       <div class="resume-entry-header">
         <div class="resume-entry-title">LLM & VLM Alignment, PAIR Lab</div>
-        <div class="resume-entry-meta">Jun 2024 - Present</div>
+        <div class="resume-entry-meta">Jun 2024 - May 2025</div>
       </div>
       <ul>
         <li>Contributed to the <em>Align Anything</em> framework, including training code, interactive terminals, and datasets.</li>
@@ -76,10 +90,56 @@ title: Home
     <div class="resume-entry">
       <div class="resume-entry-header">
         <div class="resume-entry-title">LLM-based Social Relation Understanding, Peking University / BIGAI</div>
-        <div class="resume-entry-meta">Dec 2024 - Present</div>
+        <div class="resume-entry-meta">Dec 2024 - May 2025</div>
       </div>
       <ul>
-        <li>Collaborating with Fanqi Kong to explore adversarial model generation methods for improving bot detection in large language models.</li>
+        <li>Collaborated with Fanqi Kong to explore adversarial model generation methods for improving bot detection in large language models.</li>
+      </ul>
+    </div>
+    <div class="resume-entry">
+      <div class="resume-entry-header">
+        <div class="resume-entry-title">LLM Math Agent</div>
+        <div class="resume-entry-meta">Sept 2025 - Present</div>
+      </div>
+      <ul>
+        <li>Working on automated mathematical proof verifiers based on step decomposition and fine-grained review.</li>
+      </ul>
+    </div>
+    <div class="resume-entry">
+      <div class="resume-entry-header">
+        <div class="resume-entry-title">Multi Agent LLM</div>
+        <div class="resume-entry-meta">Sept 2025 - Present</div>
+      </div>
+      <ul>
+        <li>Working on multi-agent reinforcement learning methods to improve long-context capabilities of language models.</li>
+      </ul>
+    </div>
+    <div class="resume-entry">
+      <div class="resume-entry-header">
+        <div class="resume-entry-title">LLM LoRA Memory</div>
+        <div class="resume-entry-meta">May 2026 - Present</div>
+      </div>
+      <ul>
+        <li>Developing new methods to substantially improve model capabilities during test-time training.</li>
+      </ul>
+    </div>
+    <div class="resume-entry">
+      <div class="resume-entry-header">
+        <div class="resume-entry-title">AI for Perovskite</div>
+        <div class="resume-entry-meta">Sept 2025 - Present</div>
+      </div>
+      <ul>
+        <li>Using fine-tuned pretrained molecular models to predict delta PCE for dopant molecules in perovskite solar cells.</li>
+      </ul>
+    </div>
+    <div class="resume-entry">
+      <div class="resume-entry-header">
+        <div class="resume-entry-title">AI for Cryo-ET Reconstruction</div>
+        <div class="resume-entry-meta">Sept 2025 - Present</div>
+      </div>
+      <ul>
+        <li>Building a variational-inference-based Cryo-ET reconstruction paradigm and demonstrating its usefulness and inspiration for the community from both theoretical and experimental perspectives.</li>
+        <li>Developed a series of works including CryoGEN, CryoGEN-II, and CryoWGEN; completed the <a href="https://xinyuchen-pku.github.io/blogs/cryo-et/">Cryo-ET blog</a> and the knowledge base <a href="https://opencryo-preview.vercel.app/en/">Open Cryo-ET</a>.</li>
       </ul>
     </div>
   </section>
@@ -88,24 +148,42 @@ title: Home
     <h2>Research Outputs</h2>
     <div class="resume-entry">
       <div class="resume-entry-header">
-        <div class="resume-entry-title">LLM Meets Social Media: Co-Evolution of Bot and Detector through Adversarial Learning</div>
-        <div class="resume-entry-meta"><a href="https://openreview.net/forum?id=tUjE4JTAg5">link</a></div>
+        <div class="resume-entry-title"><a href="https://arxiv.org/abs/2503.17682">Safe RLHF-V: Safe Reinforcement Learning from Multi-modal Human Feedback</a></div>
+        <div class="resume-entry-meta">NeurIPS 2025</div>
       </div>
-      <p><strong><em>In submission ACL 2025</em></strong></p>
     </div>
     <div class="resume-entry">
       <div class="resume-entry-header">
-        <div class="resume-entry-title">Safe RLHF-V: Safe Reinforcement Learning from Human Feedback in Multimodal Large Language Models</div>
-        <div class="resume-entry-meta"><a href="https://openreview.net/forum?id=vn8dEfBru5">link</a></div>
+        <div class="resume-entry-title">CryoGEN-II: Cryogenic Electron Tomography Reconstruction via Generative Network</div>
+        <div class="resume-entry-meta">CVPR 2026 Workshop</div>
       </div>
-      <p><strong><em>In submission NeurIPS 2025</em></strong></p>
     </div>
     <div class="resume-entry">
       <div class="resume-entry-header">
-        <div class="resume-entry-title">SIV-Bench: A Video Benchmark for Social Interaction Understanding and Reasoning</div>
-        <div class="resume-entry-meta"><a href="https://openreview.net/forum?id=JN4g86POLM">link</a></div>
+        <div class="resume-entry-title"><strong>EVIA: Entropic Variational Inference Auto-encoding</strong></div>
+        <div class="resume-entry-meta">UAI 2026</div>
       </div>
-      <p><strong><em>In submission NeurIPS 2025</em></strong></p>
+    </div>
+    <div class="resume-entry">
+      <div class="resume-entry-header">
+        <div class="resume-entry-title"><a href="https://arxiv.org/abs/2508.17711">Enhancing LLM-Based Social Bot via an Adversarial Learning Framework</a></div>
+        <div class="resume-entry-meta">EMNLP 2025 Oral</div>
+      </div>
+    </div>
+    <div class="resume-entry">
+      <div class="resume-entry-header">
+        <div class="resume-entry-title"><a href="https://arxiv.org/abs/2506.05425">SIV-Bench: A Video Benchmark for Social Interaction Understanding and Reasoning</a></div>
+        <div class="resume-entry-meta">ACL 2026</div>
+      </div>
+    </div>
+    <div class="resume-entry">
+      <div class="resume-entry-title"><strong>Reinforced Self-play for Long-Context Understanding</strong> <span class="resume-entry-meta">In preparation</span></div>
+    </div>
+    <div class="resume-entry">
+      <div class="resume-entry-title">Veri Graph: A Graph-Based Agentic Workflow for Mathematical Proof Verification <span class="resume-entry-meta">In preparation</span></div>
+    </div>
+    <div class="resume-entry">
+      <div class="resume-entry-title"><strong>Transfer learning discovery of modulating molecules for perovskite solar cells</strong> <span class="resume-entry-meta">In preparation</span></div>
     </div>
   </section>
 
@@ -149,14 +227,24 @@ title: Home
     </div>
     <div class="resume-entry">
       <div class="resume-entry-header">
-        <div class="resume-entry-title">The Beer Game with Deep Reinforcement Learning</div>
-        <div class="resume-entry-meta"><a href="https://github.com/yongzhemiaolegemi/BeerGame.git">repo</a></div>
+        <div class="resume-entry-title">AgentMind</div>
+        <div class="resume-entry-meta">Agent platform</div>
       </div>
+      <p>Full-process agent platform for data collection, knowledge-base RAG graph construction, and deep research.</p>
       <ul>
-        <li>Designed and implemented a DQN algorithm for decision-making in a simulated supply chain environment.</li>
-        <li>Extended single-agent learning to multi-agent training with parallel, asymptotic, and hybrid frameworks.</li>
+        <li>Supports multi-source data collection and research orchestration, integrating web search, Baidu Hot Search, arXiv, webpage crawling, planning, analysis, and report generation.</li>
+        <li>Supports knowledge-base RAG and entity-enhanced graph construction, including document chunking, vector retrieval, LinearRAG entity extraction, entity statistics, and entity-aware recall.</li>
+        <li>Supports deep research agent workflows across planning, collection, analysis, verification, and report generation, producing structured reports with citations, charts, and conclusions.</li>
+        <li>Collaborated with Costar Group for deployment and migration, serving its optical large-model dialogue platform.</li>
       </ul>
     </div>
+  </section>
+
+  <section class="resume-section">
+    <h2>Talks</h2>
+    <ul>
+      <li><a href="https://event.baai.ac.cn/activities/1056">CryoGEN-II: Cryogenic Electron Tomography Reconstruction via Generative Network</a></li>
+    </ul>
   </section>
 
   <section class="resume-section">
@@ -179,21 +267,26 @@ title: Home
   <section class="resume-section">
     <h2>Blogs</h2>
     <ul class="blog-list">
-      <li><a href="{{ '/blogs/cryo-et/' | relative_url }}">Cryo-ET blog</a></li>
+      <li><a href="https://xinyuchen-pku.github.io/blogs/cryo-et/">Cryo-ET blog</a></li>
     </ul>
   </section>
 </article>
 
 <article class="resume" data-lang="zh">
   <header class="resume-header">
-    <h1>Xinyu Chen 的 GitHub 主页</h1>
-    <div class="resume-contact">
-      <span>中国，北京</span>
-      <span>chenxinyu20040529@gmail.com</span>
-      <span>+86 18911827529</span>
+    <div class="resume-header-main">
+      <div class="resume-header-text">
+        <h1>陈昕宇</h1>
+        <div class="resume-contact">
+          <span>中国，北京</span>
+          <span>chenxinyu20040529@gmail.com</span>
+          <span>+86 18911827529</span>
+        </div>
+      </div>
+      <img class="resume-photo" src="{{ '/photo.jpg' | relative_url }}" alt="陈昕宇的照片">
     </div>
     <div class="resume-actions">
-      <button class="print-button" type="button" data-print-resume>导出简历 PDF</button>
+      <a class="print-button" href="{{ '/assets/Xinyu_Chen_Resume_ZH_v2.pdf' | relative_url }}" download>下载简历 PDF</a>
     </div>
   </header>
 
@@ -202,13 +295,22 @@ title: Home
     <div class="resume-entry">
       <div class="resume-entry-header">
         <div class="resume-entry-title">北京大学，元培学院，图灵班</div>
-        <div class="resume-entry-meta">2022 年 9 月 - 至今</div>
+        <div class="resume-entry-meta">2022 年 9 月 - 2026 年 7 月</div>
       </div>
       <ul>
         <li><strong>专业：</strong>人工智能</li>
-        <li><strong>GPA：</strong>3.667/4.0 | 86.7/100</li>
-        <li><strong>核心课程：</strong>机器学习、人工智能数学基础、多智能体系统、计算机视觉导论、人工智能系统实践 I/II、认知与推理、深度学习与自然语言处理</li>
-        <li><a href="https://pair-lab.com/">PAIR-Lab</a> 成员，<a href="https://www.bigai.ai/">BIGAI</a> 实习生</li>
+        <li><strong>GPA：</strong>3.565/4.0 | 85/100（前三年：3.667/4.0 | 86.7/100）</li>
+        <li><strong>核心课程：</strong>机器学习（91）、人工智能数学基础（90）、多智能体系统（94）、计算机视觉导论（93）、人工智能系统实践 I（96）、人工智能系统实践 II（97）、认知与推理（90.5）、深度学习与自然语言处理（93）</li>
+        <li><a href="https://pair-lab.com/">PAIR-Lab</a> 成员，<a href="https://www.baai.ac.cn/">BAAI</a> 实习生</li>
+      </ul>
+    </div>
+    <div class="resume-entry">
+      <div class="resume-entry-header">
+        <div class="resume-entry-title">北京大学，计算机学院，博士生</div>
+        <div class="resume-entry-meta">2026 年 9 月 - 至今</div>
+      </div>
+      <ul>
+        <li><strong>博士生导师：</strong>王腾蛟</li>
       </ul>
     </div>
   </section>
@@ -246,7 +348,7 @@ title: Home
     <div class="resume-entry">
       <div class="resume-entry-header">
         <div class="resume-entry-title">大语言模型与视觉语言模型对齐，PAIR Lab</div>
-        <div class="resume-entry-meta">2024 年 6 月 - 至今</div>
+        <div class="resume-entry-meta">2024 年 6 月 - 2025 年 5 月</div>
       </div>
       <ul>
         <li>参与 <em>Align Anything</em> 框架开发，包括训练代码、交互式终端和数据集建设。</li>
@@ -257,10 +359,56 @@ title: Home
     <div class="resume-entry">
       <div class="resume-entry-header">
         <div class="resume-entry-title">基于大语言模型的社会关系理解，北京大学 / BIGAI</div>
-        <div class="resume-entry-meta">2024 年 12 月 - 至今</div>
+        <div class="resume-entry-meta">2024 年 12 月 - 2025 年 5 月</div>
       </div>
       <ul>
         <li>与孔繁祺合作，探索新的对抗式模型生成方法，以增强大语言模型检测机器人的能力。</li>
+      </ul>
+    </div>
+    <div class="resume-entry">
+      <div class="resume-entry-header">
+        <div class="resume-entry-title">LLM Math Agent</div>
+        <div class="resume-entry-meta">2025 年 9 月 - 至今</div>
+      </div>
+      <ul>
+        <li>致力于构建基于步骤拆解和细粒度审查的自动化数学证明 verifier。</li>
+      </ul>
+    </div>
+    <div class="resume-entry">
+      <div class="resume-entry-header">
+        <div class="resume-entry-title">Multi Agent LLM</div>
+        <div class="resume-entry-meta">2025 年 9 月 - 至今</div>
+      </div>
+      <ul>
+        <li>致力于使用 multi agent 强化学习方法提升模型长上下文能力。</li>
+      </ul>
+    </div>
+    <div class="resume-entry">
+      <div class="resume-entry-header">
+        <div class="resume-entry-title">LLM LoRA Memory</div>
+        <div class="resume-entry-meta">2026 年 5 月 - 至今</div>
+      </div>
+      <ul>
+        <li>致力于开发新方法以切实提升 test time training 的模型能力。</li>
+      </ul>
+    </div>
+    <div class="resume-entry">
+      <div class="resume-entry-header">
+        <div class="resume-entry-title">AI for Perovskite</div>
+        <div class="resume-entry-meta">2025 年 9 月 - 至今</div>
+      </div>
+      <ul>
+        <li>致力于使用微调的预训练分子大模型对钙钛矿掺杂分子的 delta PCE 进行预测。</li>
+      </ul>
+    </div>
+    <div class="resume-entry">
+      <div class="resume-entry-header">
+        <div class="resume-entry-title">AI for Cryo-ET Reconstruction</div>
+        <div class="resume-entry-meta">2025 年 9 月 - 至今</div>
+      </div>
+      <ul>
+        <li>致力于构建基于变分推断的 Cryo-ET 重建范式，从理论和实验两层面证明其可用性和对社区的启发性。</li>
+        <li>推出了系列工作 CryoGEN、CryoGEN-II、CryoWGEN，完成了博客页面 <a href="https://xinyuchen-pku.github.io/blogs/cryo-et/">Cryo-ET blog | Xinyu Chen</a> 和知识库 <a href="https://opencryo-preview.vercel.app/en/">Open Cryo-ET</a>。</li>
       </ul>
     </div>
   </section>
@@ -269,24 +417,42 @@ title: Home
     <h2>科研产出</h2>
     <div class="resume-entry">
       <div class="resume-entry-header">
-        <div class="resume-entry-title">LLM Meets Social Media: Co-Evolution of Bot and Detector through Adversarial Learning</div>
-        <div class="resume-entry-meta"><a href="https://openreview.net/forum?id=tUjE4JTAg5">link</a></div>
+        <div class="resume-entry-title"><a href="https://arxiv.org/abs/2503.17682">Safe RLHF-V: Safe Reinforcement Learning from Multi-modal Human Feedback</a></div>
+        <div class="resume-entry-meta">NeurIPS 2025</div>
       </div>
-      <p><strong><em>投稿中，ACL 2025</em></strong></p>
     </div>
     <div class="resume-entry">
       <div class="resume-entry-header">
-        <div class="resume-entry-title">Safe RLHF-V: Safe Reinforcement Learning from Human Feedback in Multimodal Large Language Models</div>
-        <div class="resume-entry-meta"><a href="https://openreview.net/forum?id=vn8dEfBru5">link</a></div>
+        <div class="resume-entry-title">CryoGEN-II: Cryogenic Electron Tomography Reconstruction via Generative Network</div>
+        <div class="resume-entry-meta">CVPR 2026 Workshop</div>
       </div>
-      <p><strong><em>投稿中，NeurIPS 2025</em></strong></p>
     </div>
     <div class="resume-entry">
       <div class="resume-entry-header">
-        <div class="resume-entry-title">SIV-Bench: A Video Benchmark for Social Interaction Understanding and Reasoning</div>
-        <div class="resume-entry-meta"><a href="https://openreview.net/forum?id=JN4g86POLM">link</a></div>
+        <div class="resume-entry-title"><strong>EVIA: Entropic Variational Inference Auto-encoding</strong></div>
+        <div class="resume-entry-meta">UAI 2026</div>
       </div>
-      <p><strong><em>投稿中，NeurIPS 2025</em></strong></p>
+    </div>
+    <div class="resume-entry">
+      <div class="resume-entry-header">
+        <div class="resume-entry-title"><a href="https://arxiv.org/abs/2508.17711">Enhancing LLM-Based Social Bot via an Adversarial Learning Framework</a></div>
+        <div class="resume-entry-meta">EMNLP 2025 Oral</div>
+      </div>
+    </div>
+    <div class="resume-entry">
+      <div class="resume-entry-header">
+        <div class="resume-entry-title"><a href="https://arxiv.org/abs/2506.05425">SIV-Bench: A Video Benchmark for Social Interaction Understanding and Reasoning</a></div>
+        <div class="resume-entry-meta">ACL 2026</div>
+      </div>
+    </div>
+    <div class="resume-entry">
+      <div class="resume-entry-title"><strong>Reinforced Self-play for Long-Context Understanding</strong> <span class="resume-entry-meta">正在准备</span></div>
+    </div>
+    <div class="resume-entry">
+      <div class="resume-entry-title">Veri Graph: A Graph-Based Agentic Workflow for Mathematical Proof Verification <span class="resume-entry-meta">正在准备</span></div>
+    </div>
+    <div class="resume-entry">
+      <div class="resume-entry-title"><strong>Transfer learning discovery of modulating molecules for perovskite solar cells</strong> <span class="resume-entry-meta">正在准备</span></div>
     </div>
   </section>
 
@@ -330,14 +496,24 @@ title: Home
     </div>
     <div class="resume-entry">
       <div class="resume-entry-header">
-        <div class="resume-entry-title">基于深度强化学习的 Beer Game</div>
-        <div class="resume-entry-meta"><a href="https://github.com/yongzhemiaolegemi/BeerGame.git">repo</a></div>
+        <div class="resume-entry-title">AgentMind</div>
+        <div class="resume-entry-meta">Agent 平台</div>
       </div>
+      <p>数据收集、知识库 RAG 建图、深度研究全流程 agent 平台。</p>
       <ul>
-        <li>设计并实现 DQN 算法，用于模拟供应链环境中的决策优化。</li>
-        <li>从预定义策略下的单智能体学习扩展到并行、渐进和混合框架下的多智能体训练。</li>
+        <li>支持多源数据采集与研究编排：集成网页检索、百度热搜、arXiv、网页正文抓取等工具，自动完成研究规划、数据采集、分析与报告生成流程。</li>
+        <li>支持知识库 RAG 与实体增强建图：文档上传后自动切块、向量化检索，并进行 LinearRAG 实体抽取、实体统计与实体感知召回。</li>
+        <li>支持深度研究 Agent 工作流：按“规划-采集-分析-验证/报告”阶段驱动工具调用，产出带引用、图表和结论的结构化研究报告。</li>
+        <li>相关项目和中光学合作，部署移植，服务于中光学的光学大模型对话平台。</li>
       </ul>
     </div>
+  </section>
+
+  <section class="resume-section">
+    <h2>报告</h2>
+    <ul>
+      <li><a href="https://event.baai.ac.cn/activities/1056">CryoGEN-II：基于生成网络的冷冻电子断层扫描重建_智源社区</a></li>
+    </ul>
   </section>
 
   <section class="resume-section">
@@ -360,7 +536,7 @@ title: Home
   <section class="resume-section">
     <h2>博客</h2>
     <ul class="blog-list">
-      <li><a href="{{ '/blogs/cryo-et/' | relative_url }}">Cryo-ET blog</a></li>
+      <li><a href="https://xinyuchen-pku.github.io/blogs/cryo-et/">Cryo-ET blog</a></li>
     </ul>
   </section>
 </article>

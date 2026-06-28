@@ -192,7 +192,14 @@
 
     .resume-header {
       margin-bottom: 2rem;
-      text-align: center;
+      text-align: left;
+    }
+
+    .resume-header-main {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 1.5rem;
+      align-items: center;
     }
 
     .resume-header h1 {
@@ -202,9 +209,17 @@
     .resume-contact {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
       gap: 0.4rem 0.75rem;
       color: #606c71;
+    }
+
+    .resume-photo {
+      width: 8.5rem;
+      height: 10.5rem;
+      object-fit: cover;
+      border: 3px solid #dce6f0;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     }
 
     .resume-actions {
@@ -212,12 +227,20 @@
     }
 
     .print-button {
+      display: inline-block;
       padding: 0.55rem 0.9rem;
       color: #fff;
       cursor: pointer;
       background: #155799;
       border: 0;
       border-radius: 5px;
+      text-decoration: none;
+    }
+
+    .print-button:hover {
+      color: #fff;
+      text-decoration: none;
+      background: #159957;
     }
 
     .resume-section {
@@ -264,6 +287,23 @@
     }
 
     @media (max-width: 720px) {
+      .resume-header {
+        text-align: center;
+      }
+
+      .resume-header-main {
+        grid-template-columns: 1fr;
+      }
+
+      .resume-contact {
+        justify-content: center;
+      }
+
+      .resume-photo {
+        order: -1;
+        margin: 0 auto;
+      }
+
       .resume-entry-header,
       .resume-compact-list {
         grid-template-columns: 1fr;
@@ -280,8 +320,10 @@
       }
 
       body {
-        color: #111;
+        color: #2b2b2b;
         background: #fff;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
       }
 
       .site-nav,
@@ -305,9 +347,24 @@
         margin-bottom: 1rem;
       }
 
+      .resume-header-main {
+        grid-template-columns: minmax(0, 1fr) auto;
+      }
+
+      .resume-photo {
+        width: 6.8rem;
+        height: 8.4rem;
+        box-shadow: none;
+      }
+
       .resume-section {
         break-inside: avoid;
         margin-top: 1rem;
+      }
+
+      .resume-section h2 {
+        color: #155799;
+        border-bottom-color: #159957;
       }
 
       .resume-entry {
@@ -316,7 +373,7 @@
       }
 
       a {
-        color: #111;
+        color: #155799;
         text-decoration: none;
       }
     }
