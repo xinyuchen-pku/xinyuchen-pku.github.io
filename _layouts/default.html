@@ -274,6 +274,27 @@
       white-space: nowrap;
     }
 
+    .resume-label {
+      display: inline-block;
+      margin-right: 0.35rem;
+      font-weight: 700;
+    }
+
+    .resume-label-feature {
+      color: #155799;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    .resume-label-contribution {
+      color: #159957;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    }
+
+    .resume-author-self {
+      font-weight: 700;
+      text-decoration: underline;
+    }
+
     .resume ul {
       margin-top: 0.45rem;
     }
@@ -372,6 +393,11 @@
         margin: 0.65rem 0;
       }
 
+      .resume-page-break-before {
+        break-before: page;
+        page-break-before: always;
+      }
+
       a {
         color: #155799;
         text-decoration: none;
@@ -409,7 +435,8 @@
   <script>
     const toggle = document.getElementById("language-toggle");
     const tocList = document.getElementById("floating-toc-list");
-    let currentLanguage = "en";
+    const params = new URLSearchParams(window.location.search);
+    let currentLanguage = params.get("lang") === "zh" ? "zh" : "en";
 
     function slugify(text, index) {
       return `section-${currentLanguage}-${index}-${text
