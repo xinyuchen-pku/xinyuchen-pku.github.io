@@ -1,0 +1,49 @@
+---
+layout: default
+title: Web Projects
+---
+
+<style>
+  .project-index { padding: 1rem 0 3rem; }
+  .project-kicker { margin: 0 0 .6rem; color: #159957; font-size: .78rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+  .project-intro { max-width: 44rem; margin-bottom: 2.2rem; color: #606c71; font-size: 1.08rem; }
+  .project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); gap: 1.25rem; }
+  .project-card { position: relative; padding: 1.6rem; overflow: hidden; background: #fff; border: 1px solid #dce6f0; border-radius: 12px; box-shadow: 0 12px 32px rgba(21, 87, 153, .08); }
+  .project-card::before { position: absolute; inset: 0 0 auto; height: 4px; content: ""; background: linear-gradient(90deg, #155799, #159957); }
+  .project-card h2 { margin: .25rem 0 .7rem; border: 0; }
+  .project-card p { color: #606c71; }
+  .project-meta { display: flex; flex-wrap: wrap; gap: .45rem; margin: 1rem 0 1.35rem; }
+  .project-meta span { padding: .28rem .55rem; color: #155799; background: #edf5fa; border-radius: 999px; font-size: .78rem; font-weight: 700; }
+  .project-link { display: inline-block; padding: .62rem .9rem; color: #fff !important; background: #155799; border-radius: 6px; font-weight: 700; text-decoration: none; }
+  .project-link:hover { background: #159957; text-decoration: none; }
+</style>
+
+<article class="project-index" data-lang="en">
+  <p class="project-kicker">Selected web work</p>
+  <h1>Web Projects</h1>
+  <p class="project-intro">Small, focused tools that turn research data and technical workflows into useful public experiences.</p>
+  <div class="project-grid">
+    <section class="project-card">
+      <p class="project-kicker">Research intelligence</p>
+      <h2>Paper Signal</h2>
+      <p>A browsable snapshot of ACL 2026 papers ranked by transparent academic, engineering, and community signals. Search the full collection, compare heat scores, and verify each paper through its original sources.</p>
+      <div class="project-meta"><span>ACL 2026</span><span>2,294 papers</span><span>Static dataset</span></div>
+      <a class="project-link" href="{{ '/paper-signal/' | relative_url }}">Explore Paper Signal →</a>
+    </section>
+  </div>
+</article>
+
+<article class="project-index" data-lang="zh">
+  <p class="project-kicker">网站作品</p>
+  <h1>网站项目</h1>
+  <p class="project-intro">将研究数据与技术工作流整理成清晰、易用且可公开访问的小型网站。</p>
+  <div class="project-grid">
+    <section class="project-card">
+      <p class="project-kicker">研究情报</p>
+      <h2>Paper Signal</h2>
+      <p>一个可浏览的 ACL 2026 论文热度快照，通过透明的学术、工程与社区信号对论文进行排序。你可以搜索全部论文、比较热度分数，并通过原始来源核验结果。</p>
+      <div class="project-meta"><span>ACL 2026</span><span>2,294 篇论文</span><span>静态数据</span></div>
+      <a class="project-link" href="{{ '/paper-signal/' | relative_url }}">进入 Paper Signal →</a>
+    </section>
+  </div>
+</article>
