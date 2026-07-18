@@ -11,7 +11,7 @@
   <header class="topbar">
     <a class="brand" href="./"><span class="brand-mark">PS</span><span>Paper Signal</span></a>
     <div class="topbar-actions">
-      <label class="conference-picker"><span>会议</span><select id="conferenceSelect" aria-label="切换会议"></select></label>
+      <label class="conference-picker"><span>会议</span><select id="conferenceSelect" aria-label="切换会议"><option>正在载入…</option></select></label>
       <nav><a href="../projects/">网站项目</a><a href="../">个人主页</a></nav>
     </div>
   </header>
@@ -28,7 +28,13 @@
     <section class="results-head"><div><p class="eyebrow">RANKED PAPERS</p><h2>论文热度榜</h2></div><p id="resultSummary" aria-live="polite">正在载入数据…</p></section>
     <section id="paperList" class="paper-list" aria-live="polite"></section>
     <div id="emptyState" class="empty panel hidden"><strong>没有找到匹配的论文</strong><span>尝试更换关键词或筛选条件。</span></div>
-    <nav class="pagination" aria-label="分页"><button id="prevBtn">上一页</button><span id="pageInfo"></span><button id="nextBtn">下一页</button></nav>
+    <nav class="pagination" aria-label="分页">
+      <button id="prevBtn" type="button">上一页</button>
+      <div id="pageButtons" class="page-buttons" aria-label="选择页码"></div>
+      <button id="nextBtn" type="button">下一页</button>
+      <form id="pageJumpForm" class="page-jump"><label for="pageJumpInput">跳至</label><input id="pageJumpInput" type="number" min="1" inputmode="numeric" aria-label="输入页码"><span>页</span><button type="submit">前往</button></form>
+    </nav>
+    <p id="pageInfo" class="page-info"></p>
   </main>
   <footer><span id="snapshotLabel">数据快照</span><span id="footerConference">Paper Signal</span></footer>
   <script src="./app.js" defer></script>
