@@ -8,6 +8,7 @@ TARGET=Path(__file__).resolve().parents[1]/"paper-signal"/"data"
 CONFERENCES=[
     {"id":"acl-2026","label":"ACL 2026","source":ROOT/"ACL-2026-main"/"papers.json","file":"acl2026.json"},
     {"id":"iclr-2026","label":"ICLR 2026","source":ROOT/"ICLR-2026-Main"/"papers.json","file":"iclr2026.json"},
+    {"id":"icml-2026","label":"ICML 2026","source":ROOT/"ICML-2026-main"/"papers.json","file":"icml2026.json"},
 ]
 ALLOWED={"full_title","title_similarity","doi","arxiv_id","openreview_id"}
 
