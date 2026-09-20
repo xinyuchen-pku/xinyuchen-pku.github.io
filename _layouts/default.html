@@ -524,53 +524,16 @@
     }
 
     .gpt6-page {
-      position: relative;
-      overflow: hidden;
-      min-height: 62vh;
-      padding: clamp(2rem, 7vw, 5.5rem) clamp(1.25rem, 5vw, 4rem);
-      color: #e5e7eb;
-      background: #0b1020;
-      border: 1px solid #27345c;
-      border-radius: 18px;
-      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.22);
-      isolation: isolate;
-    }
-
-    .gpt6-report-theme .main-content {
-      max-width: 78rem;
+      color: #26364a;
     }
 
     .gpt6-report-theme .floating-toc {
       display: none;
     }
 
-    .gpt6-page::before,
-    .gpt6-page::after {
-      position: absolute;
-      z-index: -1;
-      width: 18rem;
-      height: 18rem;
-      content: "";
-      border-radius: 50%;
-      filter: blur(8px);
-      opacity: 0.34;
-    }
-
-    .gpt6-page::before {
-      top: -9rem;
-      right: -4rem;
-      background: radial-gradient(circle, #2563eb 0%, transparent 68%);
-    }
-
-    .gpt6-page::after {
-      bottom: -10rem;
-      left: -6rem;
-      background: radial-gradient(circle, #7c3aed 0%, transparent 68%);
-    }
-
     .gpt6-kicker {
       margin: 0 0 1rem;
-      color: #67e8f9;
+      color: #4f46e5;
       font: 700 0.76rem/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
       letter-spacing: 0.18em;
       text-transform: uppercase;
@@ -579,50 +542,46 @@
     .gpt6-page h1 {
       max-width: 42rem;
       margin: 0;
-      color: #f8fafc;
-      font-size: clamp(2.3rem, 7vw, 4.6rem);
+      color: #312e81;
+      font-size: clamp(2.3rem, 7vw, 3.5rem);
       letter-spacing: -0.045em;
     }
 
     .gpt6-page .gpt6-subtitle {
       max-width: 38rem;
       margin: 1.2rem 0 0;
-      color: #a5b4fc;
+      color: #475569;
       font-size: clamp(1.05rem, 2.5vw, 1.35rem);
     }
 
     .gpt6-section {
-      margin-top: 3.2rem;
-      padding-top: 1.6rem;
-      border-top: 1px solid #27345c;
+      margin-top: 2.5rem;
     }
 
     .main-content .gpt6-section h2 {
       margin: 0 0 1rem;
-      color: #e0e7ff;
+      color: #312e81;
       font-size: clamp(1.45rem, 3vw, 2rem);
     }
 
     .gpt6-section p {
       max-width: 68rem;
-      color: #cbd5e1;
+      color: #26364a;
       line-height: 1.8;
     }
 
     .main-content .gpt6-page a {
-      color: #67e8f9;
+      color: #4f46e5;
       text-underline-offset: 0.2em;
     }
 
     .main-content .gpt6-page a:hover {
-      color: #a5b4fc;
+      color: #312e81;
     }
 
     .gpt6-table-scroll {
       margin-top: 1.5rem;
       overflow-x: auto;
-      border: 1px solid #334155;
-      border-radius: 12px;
     }
 
     .gpt6-table {
@@ -636,26 +595,26 @@
     .gpt6-table th,
     .gpt6-table td {
       padding: 0.85rem 0.9rem;
-      color: #cbd5e1;
+      color: #26364a;
       vertical-align: top;
       border: 0;
-      border-bottom: 1px solid #334155;
+      border-bottom: 1px solid #dce3f3;
     }
 
     .gpt6-table thead th {
-      color: #e0e7ff;
+      color: #312e81;
       text-align: left;
-      background: #1e293b;
+      background: #f4f3ff;
     }
 
     .gpt6-table tbody th {
-      color: #f8fafc;
+      color: #312e81;
       text-align: left;
       white-space: nowrap;
     }
 
     .gpt6-table tbody tr:nth-child(odd) {
-      background: #131d30;
+      background: #f8faff;
     }
 
     .gpt6-table tbody tr:last-child th,
@@ -664,7 +623,7 @@
     }
 
     .gpt6-table code {
-      color: #93c5fd;
+      color: #4338ca;
       white-space: nowrap;
     }
 
@@ -674,12 +633,10 @@
 
     .gpt6-figure img {
       width: 100%;
-      background: #fff;
-      border-radius: 10px;
     }
 
     .gpt6-figure figcaption {
-      color: #94a3b8;
+      color: #64748b;
     }
   </style>
   <script>
