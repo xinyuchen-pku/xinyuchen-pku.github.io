@@ -6,11 +6,17 @@ permalink: /blogs/
 
 <h1 data-en="Blogs" data-zh="博客">Blogs</h1>
 
-<ul class="blog-list">
-  <li>
-    <a href="{{ '/blogs/cryo-et/' | relative_url }}">Cryo-ET blog</a>
-  </li>
-  <li>
-    <a href="{{ '/blogs/gpt6-harness/' | relative_url }}">GPT-6 Harness blog</a>
-  </li>
-</ul>
+<div class="blog-card-grid">
+  <a class="blog-card" href="{{ '/blogs/cryo-et/' | relative_url }}">
+    <span class="blog-card-kicker">Cryo-ET · 2026</span>
+    <strong>Cryo-ET blog</strong>
+    <span>冷冻电子断层成像工作流、经典重建与生成式方法。</span>
+    <span class="blog-card-cta">进入博客 →</span>
+  </a>
+  <a class="blog-card" href="{{ '/blogs/gpt6-harness/' | relative_url }}">
+    <span class="blog-card-kicker">GPT-6 Harness · 2026</span>
+    <strong>GPT-6 Harness blog</strong>
+    <span>关于下一代模型 harness 的实验记录与工程思考。</span>
+    <span class="blog-card-cta">进入博客 →</span>
+  </a>
+</div>
