@@ -4,6 +4,15 @@ title: GPT-6 Harness Report
 permalink: /blogs/gpt6-harness/
 ---
 
+<style>
+  .gpt6-setting-row { margin: 2rem 0; }
+  .gpt6-setting-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+  .gpt6-setting-pair img {
+    display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 0;
+  }
+  .gpt6-setting-row figcaption { margin-top: 0.7rem; color: #475569; line-height: 1.55; }
+</style>
+
 <article class="gpt6-page" data-lang="en">
   <p class="gpt6-kicker">Embodied AI / Research report</p>
   <h1>GPT-6 Harness Report</h1>
@@ -64,8 +73,38 @@ permalink: /blogs/gpt6-harness/
     </div>
 
     <figure class="gpt6-figure">
-      <img src="{{ '/blogs/gpt6-harness/harness-taxonomy.png' | relative_url }}" alt="Diagram comparing Show-Harness, Inspect-Agent, OpenETA, and CaP-X by their agent outputs, harness support, and abstraction levels">
-      <figcaption>Figure 1. A visual comparison of four embodied harness architectures. The progression indicates increasing abstraction and infrastructure support, not a universal ranking of quality.</figcaption>
+      <img src="harness-taxonomy.png" alt="Diagram comparing Show-Harness, Inspect-Agent, OpenETA, and CaP-X by their agent outputs, harness support, and abstraction levels">
+      <figcaption>Figure 1. Four embodied harness architectures.</figcaption>
+    </figure>
+  </section>
+
+  <section class="gpt6-section">
+    <h2>2. Experimental settings</h2>
+    <p>We consider three settings: vertical grasping and side grasping in simulation, followed by operation on a physical robot.</p>
+    <p><strong>Robot platforms.</strong> The simulation uses a Franka Panda arm in RoboLab / Isaac Sim; the cube-lifting and drawer-opening scenes use Franka Panda tasks in Isaac Lab. The physical setup on <code>robot</code> is a dual-arm ARX5 (X5-2025 configuration), with a head camera and left/right wrist cameras. The real-robot task is to pick up an electronic component and place it on a breadboard, using the right arm while the left remains still.</p>
+
+    <figure class="gpt6-setting-row">
+      <div class="gpt6-setting-pair">
+        <img src="setting-lift-cube.png" alt="Franka Panda gripper holding a cube in the Isaac Lab lifting scene" loading="lazy">
+        <img src="setting-pick-green.png" alt="Global and wrist-camera views of a green block before a vertical grasp" loading="lazy">
+      </div>
+      <figcaption>Figure 2. Vertical grasping: (a) lift a cube; (b) pick up a green block.</figcaption>
+    </figure>
+
+    <figure class="gpt6-setting-row">
+      <div class="gpt6-setting-pair">
+        <img src="setting-open-drawer.png" alt="Franka Panda gripper pulling the upper drawer by its handle" loading="lazy">
+        <img src="setting-white-mug.png" alt="Initial pose of a sideways white mug before reorientation, shown in global and wrist views" loading="lazy">
+      </div>
+      <figcaption>Figure 3. Side and non-vertical grasping: (a) pull an upper drawer; (b) turn a sideways white mug upright.</figcaption>
+    </figure>
+
+    <figure class="gpt6-setting-row">
+      <div class="gpt6-setting-pair">
+        <img src="setting-arx5-structure.png" alt="ARX5 arm structure and joint-axis illustration" loading="lazy">
+        <img src="setting-arx5-breadboard.jpg" alt="Dual-arm ARX5 beside an electronic component and a breadboard in the real-robot task setting" loading="lazy">
+      </div>
+      <figcaption>Figure 4. Physical setup: (a) ARX5 arm structure; (b) electronic-component placement task setting.</figcaption>
     </figure>
   </section>
 </article>
@@ -130,8 +169,38 @@ permalink: /blogs/gpt6-harness/
     </div>
 
     <figure class="gpt6-figure">
-      <img src="{{ '/blogs/gpt6-harness/harness-taxonomy.png' | relative_url }}" alt="比较 Show-Harness、Inspect-Agent、OpenETA 与 CaP-X 的 Agent 输出、Harness 支持能力和抽象层级的分类图">
-      <figcaption>图 1：四类具身 Harness 架构的可视化比较。图中的递进表示抽象层级和基础设施支持逐渐增加，不代表普遍适用的优劣排名。</figcaption>
+      <img src="harness-taxonomy.png" alt="比较 Show-Harness、Inspect-Agent、OpenETA 与 CaP-X 的 Agent 输出、Harness 支持能力和抽象层级的分类图">
+      <figcaption>图 1：四类具身 Harness 架构。</figcaption>
+    </figure>
+  </section>
+
+  <section class="gpt6-section">
+    <h2>第二章：实验设置</h2>
+    <p>实验设置分为三类：仿真中的垂直夹取和侧向夹取，以及物理真机操作。</p>
+    <p><strong>机械臂平台。</strong>仿真使用 RoboLab / Isaac Sim 中的 Franka Panda 机械臂；抬方块、开抽屉场景使用 Isaac Lab 的 Franka Panda 任务。<code>robot</code> 主机上的真机为双臂 ARX5（X5-2025 配置），配有头部相机和左右腕部相机。真机任务是使用右臂夹取电子元件并放置在面包板上，左臂保持不动。</p>
+
+    <figure class="gpt6-setting-row">
+      <div class="gpt6-setting-pair">
+        <img src="setting-lift-cube.png" alt="Isaac Lab 抬方块场景中夹住方块的 Franka Panda 夹爪" loading="lazy">
+        <img src="setting-pick-green.png" alt="垂直夹取绿色物体前的全局与腕部相机双视角" loading="lazy">
+      </div>
+      <figcaption>图 2：垂直夹取——(a) 抬起方块；(b) 抓起绿色物体。</figcaption>
+    </figure>
+
+    <figure class="gpt6-setting-row">
+      <div class="gpt6-setting-pair">
+        <img src="setting-open-drawer.png" alt="Franka Panda 夹住上层抽屉把手并拉开抽屉" loading="lazy">
+        <img src="setting-white-mug.png" alt="白色杯子扶正前的初始姿态，展示全局与腕部视角" loading="lazy">
+      </div>
+      <figcaption>图 3：侧向与非竖直夹取——(a) 拉开上层抽屉；(b) 扶正侧倒白杯。</figcaption>
+    </figure>
+
+    <figure class="gpt6-setting-row">
+      <div class="gpt6-setting-pair">
+        <img src="setting-arx5-structure.png" alt="ARX5 机械臂结构与关节轴向示意图" loading="lazy">
+        <img src="setting-arx5-breadboard.jpg" alt="ARX5 双臂机械臂、电子元件与面包板的真机任务场景" loading="lazy">
+      </div>
+      <figcaption>图 4：真机平台——(a) ARX5 机械臂结构图；(b) 电子元件放置任务场景。</figcaption>
     </figure>
   </section>
 </article>
