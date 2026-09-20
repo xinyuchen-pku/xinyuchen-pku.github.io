@@ -536,6 +536,14 @@
       isolation: isolate;
     }
 
+    .gpt6-report-theme .main-content {
+      max-width: 78rem;
+    }
+
+    .gpt6-report-theme .floating-toc {
+      display: none;
+    }
+
     .gpt6-page::before,
     .gpt6-page::after {
       position: absolute;
@@ -583,33 +591,95 @@
       font-size: clamp(1.05rem, 2.5vw, 1.35rem);
     }
 
-    .gpt6-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.55rem;
-      margin-top: 2.8rem;
-      padding: 0.55rem 0.8rem;
+    .gpt6-section {
+      margin-top: 3.2rem;
+      padding-top: 1.6rem;
+      border-top: 1px solid #27345c;
+    }
+
+    .main-content .gpt6-section h2 {
+      margin: 0 0 1rem;
+      color: #e0e7ff;
+      font-size: clamp(1.45rem, 3vw, 2rem);
+    }
+
+    .gpt6-section p {
+      max-width: 68rem;
       color: #cbd5e1;
-      font: 600 0.82rem/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
+      line-height: 1.8;
+    }
+
+    .main-content .gpt6-page a {
+      color: #67e8f9;
+      text-underline-offset: 0.2em;
+    }
+
+    .main-content .gpt6-page a:hover {
+      color: #a5b4fc;
+    }
+
+    .gpt6-table-scroll {
+      margin-top: 1.5rem;
+      overflow-x: auto;
       border: 1px solid #334155;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.72);
+      border-radius: 12px;
     }
 
-    .gpt6-status::before {
-      width: 0.5rem;
-      height: 0.5rem;
-      content: "";
-      border-radius: 50%;
-      background: #22d3ee;
-      box-shadow: 0 0 14px #22d3ee;
+    .gpt6-table {
+      width: 100%;
+      min-width: 760px;
+      margin: 0;
+      border-collapse: collapse;
+      font-size: 0.9rem;
     }
 
-    .gpt6-note {
-      max-width: 32rem;
-      margin: 1.5rem 0 0;
+    .gpt6-table th,
+    .gpt6-table td {
+      padding: 0.85rem 0.9rem;
+      color: #cbd5e1;
+      vertical-align: top;
+      border: 0;
+      border-bottom: 1px solid #334155;
+    }
+
+    .gpt6-table thead th {
+      color: #e0e7ff;
+      text-align: left;
+      background: #1e293b;
+    }
+
+    .gpt6-table tbody th {
+      color: #f8fafc;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .gpt6-table tbody tr:nth-child(odd) {
+      background: #131d30;
+    }
+
+    .gpt6-table tbody tr:last-child th,
+    .gpt6-table tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .gpt6-table code {
+      color: #93c5fd;
+      white-space: nowrap;
+    }
+
+    .gpt6-figure {
+      margin: 2rem 0 0;
+    }
+
+    .gpt6-figure img {
+      width: 100%;
+      background: #fff;
+      border-radius: 10px;
+    }
+
+    .gpt6-figure figcaption {
       color: #94a3b8;
-      font-size: 0.98rem;
     }
   </style>
   <script>
@@ -622,7 +692,7 @@
   </script>
   <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 </head>
-<body class="{% if page.url == '/blogs/cryo-et/' %}cryo-et-theme{% endif %}">
+<body class="{% if page.url == '/blogs/cryo-et/' %}cryo-et-theme{% elsif page.url == '/blogs/gpt6-harness/' %}gpt6-report-theme{% endif %}">
   <nav class="site-nav" aria-label="Main navigation">
     <div class="site-nav-inner">
       <a href="{{ '/' | relative_url }}" data-en="Home" data-zh="主页">Home</a>

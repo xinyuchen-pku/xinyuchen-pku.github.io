@@ -1,13 +1,137 @@
 ---
 layout: default
-title: GPT-6 Harness blog
+title: GPT-6 Harness Report
 permalink: /blogs/gpt6-harness/
 ---
 
-<article class="gpt6-page">
-  <p class="gpt6-kicker">Research log / 001</p>
-  <h1>GPT-6 Harness</h1>
-  <p class="gpt6-subtitle">A quiet space for experiments, interfaces, and ideas around next-generation model harnesses.</p>
-  <div class="gpt6-status">STATUS: INITIALIZING</div>
-  <p class="gpt6-note">This blog is currently an empty shell. Notes and experiments will appear here soon.</p>
+<article class="gpt6-page" data-lang="en">
+  <p class="gpt6-kicker">Embodied AI / Research report</p>
+  <h1>GPT-6 Harness Report</h1>
+  <p class="gpt6-subtitle">How the harness turns a capable model into an embodied agent.</p>
+
+  <section class="gpt6-section">
+    <h2>Introduction</h2>
+    <p><a href="https://openai.com/index/gpt-6-astra/">OpenAI released GPT-6 Astra on September 3, 2026</a>. A recent <a href="https://robodojo-benchmark.com/report/gpt-6-astra-eval">RoboDojo report</a> has already demonstrated its embodied capability in simulation: with a fixed motion harness and no pretrained VLA, Astra acted directly as a robot policy on a 42-task benchmark. Yet its inference efficiency and ability to generalize to real-world settings have not been comprehensively analyzed. Existing harness architectures are designed to provide perception, motion interfaces, feedback, and other support for embodied agents. <strong>What advantages and limitations do these architectures have when paired with a substantially stronger foundation model?</strong> That question remains insufficiently explored.</p>
+    <p>This report focuses on the harness layer between model and robot. It introduces four representative architectures and examines how their different action interfaces and supporting mechanisms might expose, constrain, or stabilize the embodied capabilities that Astra has already shown in simulation. The simulation evidence motivates this comparison; it does not by itself establish reliable real-world performance.</p>
+  </section>
+
+  <section class="gpt6-section">
+    <h2>1. Four types of embodied harness</h2>
+    <p>A harness is the interface and execution environment between a model and a robot. The four examples below differ mainly in the capabilities exposed to the agent and the form of action the agent produces. This is a working taxonomy for this report, not an exhaustive classification of robotics systems.</p>
+
+    <div class="gpt6-table-scroll">
+      <table class="gpt6-table">
+        <thead>
+          <tr>
+            <th scope="col">Harness type</th>
+            <th scope="col">Representative</th>
+            <th scope="col">Capabilities given to the agent</th>
+            <th scope="col">Typical agent output</th>
+            <th scope="col">Characteristic</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Show-Harness</th>
+            <td>Show-Harness</td>
+            <td>Semantic primitive actions</td>
+            <td><code>move_left</code>, <code>move_down</code>, <code>grasp</code></td>
+            <td>Lowest abstraction level; the LLM participates frequently in control.</td>
+          </tr>
+          <tr>
+            <th scope="row">Inspect Robots</th>
+            <td>Inspect-Agent</td>
+            <td>Structured motion commands</td>
+            <td><code>move_to</code>, <code>move_by</code>, joint / pose commands</td>
+            <td>Mid-level motion control; actions are more continuous and direct.</td>
+          </tr>
+          <tr>
+            <th scope="row">OpenETA</th>
+            <td>OpenETA</td>
+            <td>Perception tools, motion tools, memory, and verification</td>
+            <td>Tool calls</td>
+            <td>A fuller embodied-agent loop, emphasizing observation and recovery.</td>
+          </tr>
+          <tr>
+            <th scope="row">CaP-X</th>
+            <td>CaP-X</td>
+            <td>Robotics APIs and a program execution environment</td>
+            <td>Python / code policy</td>
+            <td>The LLM composes perception, planning, IK, and control by writing programs.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <figure class="gpt6-figure">
+      <img src="{{ '/blogs/gpt6-harness/harness-taxonomy.png' | relative_url }}" alt="Diagram comparing Show-Harness, Inspect-Agent, OpenETA, and CaP-X by their agent outputs, harness support, and abstraction levels">
+      <figcaption>Figure 1. A visual comparison of four embodied harness architectures. The progression indicates increasing abstraction and infrastructure support, not a universal ranking of quality.</figcaption>
+    </figure>
+  </section>
+</article>
+
+<article class="gpt6-page" data-lang="zh">
+  <p class="gpt6-kicker">具身智能 / 研究报告</p>
+  <h1>GPT-6 Harness Report</h1>
+  <p class="gpt6-subtitle">Harness 如何把强模型变成具身 Agent。</p>
+
+  <section class="gpt6-section">
+    <h2>引言</h2>
+    <p><a href="https://openai.com/index/gpt-6-astra/">OpenAI 于 2026 年 9 月 3 日发布 GPT-6 Astra</a>。近期 <a href="https://robodojo-benchmark.com/report/gpt-6-astra-eval">RoboDojo 报告</a>已验证其在仿真环境中的具身能力：Astra 通过固定的 motion harness、在不依赖预训练 VLA 的情况下，直接作为机器人策略参与了 42 个任务的评测。然而，它的推理效率及其对真实场景的泛化能力，仍缺少完整的系统分析。已有的 Harness 架构旨在为具身 Agent 提供感知、运动接口、反馈等支持；但<strong>当基础模型的能力显著增强时，这些架构各有什么优势和局限？</strong> 这一问题尚未得到充分阐述。</p>
+    <p>本报告因此聚焦模型与机器人之间的 Harness 层，介绍四种代表性架构，并讨论不同的动作接口和支撑机制如何释放、约束或稳定 Astra 已在仿真中展现的具身能力。仿真证据为这一比较提供了动机，但不能单独证明模型在真实场景中已经能够可靠运行。</p>
+  </section>
+
+  <section class="gpt6-section">
+    <h2>第一章：具身 Harness 的四种形态</h2>
+    <p>Harness 是模型与机器人之间的接口及执行环境。下面四种代表方案的核心区别，是提供给 Agent 的能力，以及 Agent 最终输出的动作形式。这是本报告使用的工作性分类，并非对所有机器人系统的穷尽划分。</p>
+
+    <div class="gpt6-table-scroll">
+      <table class="gpt6-table">
+        <thead>
+          <tr>
+            <th scope="col">Harness 类别</th>
+            <th scope="col">代表方案</th>
+            <th scope="col">提供给 Agent 的主要能力</th>
+            <th scope="col">Agent 主要输出</th>
+            <th scope="col">特点</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Show-Harness</th>
+            <td>Show-Harness</td>
+            <td>语义化元动作</td>
+            <td><code>move_left</code>、<code>move_down</code>、<code>grasp</code> 等</td>
+            <td>最低层抽象，LLM 频繁参与控制。</td>
+          </tr>
+          <tr>
+            <th scope="row">Inspect Robots</th>
+            <td>Inspect-Agent</td>
+            <td>结构化运动指令</td>
+            <td><code>move_to</code>、<code>move_by</code>、joint / pose 指令</td>
+            <td>中层运动控制，动作更连续、更直接。</td>
+          </tr>
+          <tr>
+            <th scope="row">OpenETA</th>
+            <td>OpenETA</td>
+            <td>感知工具 + 运动工具 + memory + verification</td>
+            <td>Tool calls</td>
+            <td>Harness 提供完整 embodied agent 能力，强调闭环观察与恢复。</td>
+          </tr>
+          <tr>
+            <th scope="row">CaP-X</th>
+            <td>CaP-X</td>
+            <td>Robotics API + 程序执行环境</td>
+            <td>Python / Code Policy</td>
+            <td>LLM 通过写程序组合感知、规划、IK、控制等模块。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <figure class="gpt6-figure">
+      <img src="{{ '/blogs/gpt6-harness/harness-taxonomy.png' | relative_url }}" alt="比较 Show-Harness、Inspect-Agent、OpenETA 与 CaP-X 的 Agent 输出、Harness 支持能力和抽象层级的分类图">
+      <figcaption>图 1：四类具身 Harness 架构的可视化比较。图中的递进表示抽象层级和基础设施支持逐渐增加，不代表普遍适用的优劣排名。</figcaption>
+    </figure>
+  </section>
 </article>
