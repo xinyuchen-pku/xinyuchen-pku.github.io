@@ -12,6 +12,26 @@
       box-shadow: 0 1px 8px rgba(0, 0, 0, 0.12);
     }
 
+    .cryo-et-theme .site-nav {
+      background: #159957;
+      background: linear-gradient(120deg, #155799, #159957);
+    }
+
+    .cryo-et-theme .main-content h1,
+    .cryo-et-theme .main-content h2,
+    .cryo-et-theme .main-content h3,
+    .cryo-et-theme .main-content h4 {
+      color: #155799;
+    }
+
+    .cryo-et-theme .main-content a {
+      color: #159957;
+    }
+
+    .cryo-et-theme .main-content a:hover {
+      color: #155799;
+    }
+
     .site-nav-inner {
       max-width: 64rem;
       margin: 0 auto;
@@ -78,6 +98,18 @@
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 1rem;
       margin-top: 0.75rem;
+    }
+
+    .news-section {
+      padding: 1.25rem 1.35rem 1.4rem;
+      background: linear-gradient(145deg, #f8faff, #eef2ff);
+      border: 1px solid #dce3f3;
+      border-radius: 14px;
+      box-shadow: 0 10px 28px rgba(31, 41, 55, 0.07);
+    }
+
+    .news-section h2 {
+      margin-top: 0;
     }
 
     .news-card,
@@ -301,6 +333,13 @@
 
     .resume-actions {
       margin-top: 1rem;
+    }
+
+    .resume-actions-bottom {
+      margin: 2.5rem 0 0;
+      padding-top: 1.25rem;
+      text-align: center;
+      border-top: 1px solid #dce3f3;
     }
 
     .print-button {
@@ -580,7 +619,7 @@
   </script>
   <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 </head>
-<body>
+<body class="{% if page.url == '/blogs/cryo-et/' %}cryo-et-theme{% endif %}">
   <nav class="site-nav" aria-label="Main navigation">
     <div class="site-nav-inner">
       <a href="{{ '/' | relative_url }}" data-en="Home" data-zh="主页">Home</a>
