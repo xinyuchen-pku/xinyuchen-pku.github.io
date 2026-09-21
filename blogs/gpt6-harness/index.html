@@ -11,6 +11,7 @@ permalink: /blogs/gpt6-harness/
     display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 0;
   }
   .gpt6-setting-row figcaption { margin-top: 0.7rem; color: #475569; line-height: 1.55; }
+  .gpt6-figure img { display: block; width: 100%; max-width: 100%; height: auto; }
 </style>
 
 <article class="gpt6-page" data-lang="en">
@@ -107,6 +108,16 @@ permalink: /blogs/gpt6-harness/
       <figcaption>Figure 4. Physical setup: (a) ARX5 arm structure; (b) electronic-component placement task setting.</figcaption>
     </figure>
   </section>
+
+  <section class="gpt6-section">
+    <h2>3. Insight 1: GPT-6's advantage may be clearest under real-world, limited observation</h2>
+    <p>Before comparing harness architectures, we compared GPT-6 and GPT-5.6 with Show-Harness on the four simulation tasks illustrated above. Both models eventually completed all four tasks. The main comparison includes five episodes for GPT-6 and seven for GPT-5.6, including unsuccessful task attempts. The real-robot task—placing an electronic component on a breadboard—was repeated three times; those results will be added later.</p>
+    <figure class="gpt6-figure">
+      <img src="show-harness-four-sim-success.svg" alt="GPT-6 completed four tasks in five episodes, averaging 5.10 minutes, 39.8 semantic actions, and 519.8 control steps per episode. GPT-5.6 completed four tasks in seven episodes, averaging 6.65 minutes, 53.3 semantic actions, and 603.9 control steps." loading="lazy">
+      <figcaption>Figure 5. Results across all four Show-Harness simulation tasks; means are per episode, including unsuccessful attempts.</figcaption>
+    </figure>
+    <p>GPT-6 has an advantage over GPT-5.6 in simulation, but the advantage is limited.</p>
+  </section>
 </article>
 
 <article class="gpt6-page" data-lang="zh">
@@ -202,5 +213,15 @@ permalink: /blogs/gpt6-harness/
       </div>
       <figcaption>图 4：真机平台——(a) ARX5 机械臂结构图；(b) 电子元件放置任务场景。</figcaption>
     </figure>
+  </section>
+
+  <section class="gpt6-section">
+    <h2>第三章：Insight 1——GPT-6 的优势可能更体现在真实环境与受限观测中</h2>
+    <p>在比较不同 Harness 架构之前，我们用 Show-Harness 比较了 GPT-6 和 GPT-5.6 在上文四项仿真任务中的表现。两个模型最终都完成了四项任务；主比较纳入 GPT-6 的 5 个回合和 GPT-5.6 的 7 个回合，其中包括未成功的任务尝试。真机任务为夹取电子元件并放置在面包板上，重复三次；结果稍后补充。</p>
+    <figure class="gpt6-figure">
+      <img src="show-harness-four-sim-success.svg" alt="GPT-6 用 5 个回合完成四项任务，平均每回合用时 5.10 分钟、39.8 个语义元动作和 519.8 个底层控制步；GPT-5.6 用 7 个回合完成四项任务，平均每回合用时 6.65 分钟、53.3 个语义元动作和 603.9 个底层控制步。" loading="lazy">
+      <figcaption>图 5：全部四项 Show-Harness 仿真任务的结果，均值按回合计算并包含失败尝试。</figcaption>
+    </figure>
+    <p>GPT-6 相比 GPT-5.6 在仿真环境中有优势，但优势有限。</p>
   </section>
 </article>

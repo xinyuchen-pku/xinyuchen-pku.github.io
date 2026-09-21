@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 310" role="img" aria-labelledby="title description">
+  <title id="title">GPT-6 and GPT-5.6 performance on four Show-Harness simulation tasks</title>
+  <desc id="description">GPT-6 completed four tasks in five episodes, with a mean wall-clock time of 5.10 minutes, 39.8 semantic actions, and 519.8 control steps per episode. GPT-5.6 completed four tasks in seven episodes, with a mean wall-clock time of 6.65 minutes, 53.3 semantic actions, and 603.9 control steps per episode.</desc>
+  <style>
+    text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; fill: #172033; }
+    .metric { font-size: 18px; font-weight: 650; }
+    .unit { font-size: 13px; fill: #68758a; }
+    .model { font-size: 14px; font-weight: 600; }
+    .value { font-size: 17px; font-weight: 700; }
+    .divider { stroke: #d9e1ec; stroke-width: 1; }
+    .track { fill: #e9eef5; }
+    .gpt6 { fill: #315fc4; }
+    .gpt56 { fill: #78879e; }
+  </style>
+
+  <line x1="240" y1="28" x2="240" y2="282" class="divider"/>
+  <line x1="480" y1="28" x2="480" y2="282" class="divider"/>
+  <line x1="720" y1="28" x2="720" y2="282" class="divider"/>
+
+  <g>
+    <text x="24" y="54" class="metric">Episode success</text>
+    <text x="24" y="75" class="unit">completed tasks / attempts</text>
+    <text x="24" y="126" class="model">GPT-6</text>
+    <rect x="88" y="108" width="120" height="24" class="track"/>
+    <rect x="88" y="108" width="96" height="24" class="gpt6"/>
+    <text x="88" y="158" class="value">4 / 5</text>
+    <text x="24" y="211" class="model">GPT-5.6</text>
+    <rect x="88" y="193" width="120" height="24" class="track"/>
+    <rect x="88" y="193" width="68.6" height="24" class="gpt56"/>
+    <text x="88" y="243" class="value">4 / 7</text>
+  </g>
+
+  <g transform="translate(240 0)">
+    <text x="24" y="54" class="metric">Mean wall-clock</text>
+    <text x="24" y="75" class="unit">minutes per episode</text>
+    <text x="24" y="126" class="model">GPT-6</text>
+    <rect x="88" y="108" width="120" height="24" class="track"/>
+    <rect x="88" y="108" width="92" height="24" class="gpt6"/>
+    <text x="88" y="158" class="value">5.10 min</text>
+    <text x="24" y="211" class="model">GPT-5.6</text>
+    <rect x="88" y="193" width="120" height="24" class="track"/>
+    <rect x="88" y="193" width="120" height="24" class="gpt56"/>
+    <text x="88" y="243" class="value">6.65 min</text>
+  </g>
+
+  <g transform="translate(480 0)">
+    <text x="24" y="54" class="metric">Mean actions</text>
+    <text x="24" y="75" class="unit">semantic actions per episode</text>
+    <text x="24" y="126" class="model">GPT-6</text>
+    <rect x="88" y="108" width="120" height="24" class="track"/>
+    <rect x="88" y="108" width="89.6" height="24" class="gpt6"/>
+    <text x="88" y="158" class="value">39.8</text>
+    <text x="24" y="211" class="model">GPT-5.6</text>
+    <rect x="88" y="193" width="120" height="24" class="track"/>
+    <rect x="88" y="193" width="120" height="24" class="gpt56"/>
+    <text x="88" y="243" class="value">53.3</text>
+  </g>
+
+  <g transform="translate(720 0)">
+    <text x="24" y="54" class="metric">Mean control steps</text>
+    <text x="24" y="75" class="unit">low-level steps per episode</text>
+    <text x="24" y="126" class="model">GPT-6</text>
+    <rect x="88" y="108" width="120" height="24" class="track"/>
+    <rect x="88" y="108" width="103.3" height="24" class="gpt6"/>
+    <text x="88" y="158" class="value">519.8</text>
+    <text x="24" y="211" class="model">GPT-5.6</text>
+    <rect x="88" y="193" width="120" height="24" class="track"/>
+    <rect x="88" y="193" width="120" height="24" class="gpt56"/>
+    <text x="88" y="243" class="value">603.9</text>
+  </g>
+</svg>
